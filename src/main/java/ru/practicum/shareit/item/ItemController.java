@@ -2,12 +2,15 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.model.Item;
 
-/**
- * TODO Sprint add-controllers.
- */
+import javax.validation.Valid;
+import java.util.List;
+
 @RequiredArgsConstructor
 @Slf4j
 @RestController
@@ -16,22 +19,33 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ItemDto createItem(ItemDto item) {
-        return item;
+    public ItemDto createItem(@RequestHeader(value = "X-Sharer-User-Id", required = true) int ownerId,
+                              @Valid @RequestBody Item item) {
+        return itemService.createItem(item, ownerId);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItem(ItemDto item) {
-        return item;
+    public ResponseEntity<ItemDto> updateItem(@PathVariable int itemId,
+                              @RequestHeader(value = "X-Sharer-User-Id", required = true) int ownerId,
+                              @Valid @RequestBody Item item) {
+        return new ResponseEntity<>(itemService.updateItem(itemId, item, ownerId), HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ItemDto>> getAllItems(@PathVariable int itemId,
+                                     @RequestHeader(value = "X-Sharer-User-Id", required = true) int ownerId,
+                                     @Valid @RequestBody Item item) {
+        return new ResponseEntity<>(itemService.getItemsOfOwner(ownerId), HttpStatus.OK);
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItem(String id) {
-        return new ItemDto();
+    public ResponseEntity<ItemDto> getItem(@PathVariable int itemId,
+                           @RequestHeader(value = "X-Sharer-User-Id", required = true) int ownerId) {
+        return new ResponseEntity<>(itemService.getItem(itemId, ownerId), HttpStatus.OK);
     }
 
     @GetMapping("/search?text={text}")
-    public ItemDto search(String text) {
-        return new ItemDto();
+    public ResponseEntity<List<ItemDto>> search(@PathVariable String text) {
+        return new ResponseEntity<>(itemService.searchItems(text), HttpStatus.OK);
     }
 }
