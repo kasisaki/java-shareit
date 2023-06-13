@@ -7,6 +7,7 @@ import java.util.HashMap;
 public class BookingInMemoryStorage implements BookingStorage {
 
     private final HashMap<Integer, Item> bookings = new HashMap<>();
+
     public Item create(Item booking) {
         bookings.put(booking.getId(), booking);
         return booking;

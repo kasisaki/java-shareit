@@ -6,7 +6,8 @@ import java.util.HashMap;
 
 public class RequestInMemoryStorage implements RequestStorage {
 
-    private HashMap<Integer, Item> bookings = new HashMap<>();
+    private final HashMap<Integer, Item> bookings = new HashMap<>();
+
     public Item create(Item request) {
         bookings.put(request.getId(), request);
         return request;

@@ -24,6 +24,7 @@ public class UserMemoryStorage implements UserStorage {
     //На этапе подключения БД уберу
 
     private Integer id = 0;
+
     public User create(User user) {
         if (usersByEmail.containsKey(user.getEmail())) {
             throw new ConflictException("User " + user.getEmail() + " already exists");

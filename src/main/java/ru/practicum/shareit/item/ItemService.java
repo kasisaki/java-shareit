@@ -69,7 +69,7 @@ public class ItemService {
         }
         for (Item item : items) {
             if (item.getDescription().toLowerCase().contains(searchStr.toLowerCase())
-            && item.getAvailable()) {
+                    && item.getAvailable()) {
                 itemsDto.add(ItemMapper.toItemDto(item));
             }
         }

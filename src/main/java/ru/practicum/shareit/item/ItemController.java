@@ -27,8 +27,8 @@ public class ItemController {
 
     @PatchMapping("/{itemId}")
     public ResponseEntity<ItemDto> updateItem(@PathVariable int itemId,
-                              @RequestHeader(value = "X-Sharer-User-Id") int ownerId,
-                              @Valid @RequestBody ItemUpdateDto item) {
+                                              @RequestHeader(value = "X-Sharer-User-Id") int ownerId,
+                                              @Valid @RequestBody ItemUpdateDto item) {
         return new ResponseEntity<>(itemService.updateItem(itemId, item, ownerId), HttpStatus.OK);
     }
 
@@ -39,7 +39,7 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     public ResponseEntity<ItemDto> getItem(@PathVariable int itemId,
-                           @RequestHeader(value = "X-Sharer-User-Id") int ownerId) {
+                                           @RequestHeader(value = "X-Sharer-User-Id") int ownerId) {
         return new ResponseEntity<>(itemService.getItem(itemId, ownerId), HttpStatus.OK);
     }
 

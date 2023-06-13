@@ -16,5 +16,5 @@ public class UserDto {
     private String login;
     private String name;
     @Email
-    private String  email;
+    private String email;
 }
