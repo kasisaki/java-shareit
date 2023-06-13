@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.ElementNotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemStorage;
@@ -26,13 +27,21 @@ public class ItemService {
         if (user == null) {
             throw new ElementNotFoundException("User " + ownerId + "not found");
         }
-        itemStorage.createItem(item, user);
+        item.setOwner(user);
+        itemStorage.createItem(item);
         return ItemMapper.toItemDto(item);
     }
 
-    public ItemDto updateItem(Integer itemId, Item item, Integer ownerId) {
-        itemStorage.updateItem(item);
-        return ItemMapper.toItemDto(item);
+    public ItemDto updateItem(Integer itemId, ItemUpdateDto itemDto, Integer ownerId) {
+
+        if (userStorage.getUser(ownerId) == null) {
+            throw new ElementNotFoundException("User with id " + ownerId + " not found");
+        }
+        if (itemStorage.getItem(itemId).getOwner().getId() != ownerId) {
+            throw new ElementNotFoundException("User with id " + ownerId + "does not have item with id " + itemId);
+        }
+        itemStorage.updateItem(itemDto, itemId, ownerId);
+        return ItemMapper.toItemDto(itemStorage.getItem(itemId));
     }
 
     public ItemDto getItem(Integer itemId, Integer ownerId) {
@@ -55,8 +64,12 @@ public class ItemService {
         ArrayList<Item> items = new ArrayList<>(itemStorage.getAllItems());
         ArrayList<ItemDto> itemsDto = new ArrayList<>();
 
+        if (searchStr.isEmpty()) {
+            return itemsDto;
+        }
         for (Item item : items) {
-            if (item.getDescription().toLowerCase().contains(searchStr.toLowerCase())) {
+            if (item.getDescription().toLowerCase().contains(searchStr.toLowerCase())
+            && item.getAvailable()) {
                 itemsDto.add(ItemMapper.toItemDto(item));
             }
         }
