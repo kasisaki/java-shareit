@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.dto.UserUpdateDto;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -33,14 +33,14 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> createUser(@Valid @RequestBody User user) {
-        return new ResponseEntity<>(userService.create(user), HttpStatus.OK);
+    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserUpdateDto userUpdateDto) {
+        return new ResponseEntity<>(userService.create(userUpdateDto), HttpStatus.OK);
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(@PathVariable int id,
-                                              @RequestBody User user) {
-        return new ResponseEntity<>(userService.update(user, id), HttpStatus.OK);
+                                              @RequestBody UserUpdateDto userUpdateDto) {
+        return new ResponseEntity<>(userService.update(userUpdateDto, id), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

@@ -3,6 +3,7 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.ElementNotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemUpdateDto;
@@ -14,6 +15,7 @@ import ru.practicum.shareit.user.storage.UserStorage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,14 +24,18 @@ public class ItemService {
     private final ItemStorage itemStorage;
     private final UserStorage userStorage;
 
-    public ItemDto createItem(Item item, Integer ownerId) {
+    public ItemDto createItem(ItemUpdateDto itemUpdateDto, Integer ownerId) {
+        if (itemUpdateDto.getAvailable() == null || itemUpdateDto.getName().isEmpty()
+                || itemUpdateDto.getDescription() == null
+                || itemUpdateDto.getDescription().isEmpty()) {
+            throw new BadRequestException("Some required item fields are missing");
+        }
         User user = userStorage.getUser(ownerId);
         if (user == null) {
             throw new ElementNotFoundException("User " + ownerId + "not found");
         }
-        item.setOwner(user);
-        itemStorage.createItem(item);
-        return ItemMapper.toItemDto(item);
+        itemUpdateDto.setOwner(user);
+        return ItemMapper.toItemDto(itemStorage.createItem(itemUpdateDto));
     }
 
     public ItemDto updateItem(Integer itemId, ItemUpdateDto itemDto, Integer ownerId) {
@@ -40,11 +46,14 @@ public class ItemService {
         if (itemStorage.getItem(itemId).getOwner().getId() != ownerId) {
             throw new ElementNotFoundException("User with id " + ownerId + "does not have item with id " + itemId);
         }
-        itemStorage.updateItem(itemDto, itemId, ownerId);
-        return ItemMapper.toItemDto(itemStorage.getItem(itemId));
+
+        return ItemMapper.toItemDto(itemStorage.updateItem(itemDto, itemId));
     }
 
     public ItemDto getItem(Integer itemId, Integer ownerId) {
+        if (userStorage.getUser(ownerId) == null) {
+            throw new ElementNotFoundException("User with id " + ownerId + " not found");
+        }
         return ItemMapper.toItemDto(itemStorage.getItem(itemId));
     }
 
@@ -61,18 +70,14 @@ public class ItemService {
     }
 
     public List<ItemDto> searchItems(String searchStr) {
-        ArrayList<Item> items = new ArrayList<>(itemStorage.getAllItems());
-        ArrayList<ItemDto> itemsDto = new ArrayList<>();
-
         if (searchStr.isEmpty()) {
-            return itemsDto;
+            return new ArrayList<>();
         }
-        for (Item item : items) {
-            if (item.getDescription().toLowerCase().contains(searchStr.toLowerCase())
-                    && item.getAvailable()) {
-                itemsDto.add(ItemMapper.toItemDto(item));
-            }
-        }
-        return itemsDto;
+
+        return itemStorage.getAllItems().stream()
+                .filter(item -> item.getDescription().toLowerCase().contains(searchStr.toLowerCase()))
+                .filter(Item::getAvailable)
+                .map(ItemMapper::toItemDto)
+                .collect(Collectors.toList());
     }
 }

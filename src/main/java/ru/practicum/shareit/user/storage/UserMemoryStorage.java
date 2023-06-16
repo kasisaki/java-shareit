@@ -6,11 +6,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.ElementNotFoundException;
+import ru.practicum.shareit.user.dto.UserUpdateDto;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 @Slf4j
@@ -18,18 +21,21 @@ import java.util.List;
 @Data
 public class UserMemoryStorage implements UserStorage {
 
-    private final HashMap<Integer, User> usersById = new HashMap<>();
-    private final HashMap<String, User> usersByEmail = new HashMap<>();
-    //Такая реализация позволяет не проходиться по пользователям в поисках эл.почты
-    //На этапе подключения БД уберу
+    private final Map<Integer, User> usersById = new HashMap<>();
+    private final Map<String, User> usersByEmail = new HashMap<>();
+    //При сокращении до сета возникнут проблемы при попытке обновить почту юзера на другую, которая уже занята
+    //по условию почта должна быть уникальной
+    //Так я могу сравнить id юзеров и принять верное решение.
 
     private Integer id = 0;
 
-    public User create(User user) {
-        if (usersByEmail.containsKey(user.getEmail())) {
-            throw new ConflictException("User " + user.getEmail() + " already exists");
+    public User create(UserUpdateDto userUpdateDto) {
+        User user = User.builder().build();
+        if (usersByEmail.containsKey(userUpdateDto.getEmail())) {
+            throw new ConflictException("User " + userUpdateDto.getEmail() + " already exists");
         }
         user.setId(++id);
+        UserMapper.userUpdateFromDto(user, userUpdateDto);
         usersById.put(user.getId(), user);
         usersByEmail.put(user.getEmail(), user);
         return user;
@@ -48,16 +54,16 @@ public class UserMemoryStorage implements UserStorage {
         usersById.remove(userId);
     }
 
-    public User update(User user, Integer id) {
+    public User update(UserUpdateDto userUpdateDto, Integer id) {
         if (!usersById.containsKey(id)) {
             throw new ElementNotFoundException("User " + id + "not found");
         }
-        if (usersByEmail.containsKey(user.getEmail())
-                && usersByEmail.get(user.getEmail()).getId() != id) {
+        if (usersByEmail.containsKey(userUpdateDto.getEmail())
+                && usersByEmail.get(userUpdateDto.getEmail()).getId() != id) {
             throw new ConflictException("Duplicate emails not allowed!");
         }
         usersByEmail.remove(usersById.get(id).getEmail());
-        updateIfNotNull(user, id);
+        UserMapper.userUpdateFromDto(usersById.get(id), userUpdateDto);
         usersByEmail.put(usersById.get(id).getEmail(), usersById.get(id));
         return usersById.get(id);
     }
@@ -65,17 +71,5 @@ public class UserMemoryStorage implements UserStorage {
     @Override
     public List<User> findAll() {
         return new ArrayList<>(usersById.values());
-    }
-
-    private void updateIfNotNull(User user, Integer id) {
-        if (user.getEmail() != null) {
-            usersById.get(id).setEmail(user.getEmail());
-        }
-        if (user.getName() != null) {
-            usersById.get(id).setName(user.getName());
-        }
-        if (user.getLogin() != null) {
-            usersById.get(id).setLogin(user.getLogin());
-        }
     }
 }

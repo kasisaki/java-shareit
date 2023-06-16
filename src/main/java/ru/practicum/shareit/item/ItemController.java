@@ -7,10 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemUpdateDto;
-import ru.practicum.shareit.item.model.Item;
 
 import javax.validation.Valid;
 import java.util.List;
+
+import static ru.practicum.shareit.utils.Constants.SHARER_USER_ID;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -20,26 +21,26 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ItemDto createItem(@RequestHeader(value = "X-Sharer-User-Id") int ownerId,
-                              @Valid @RequestBody Item item) {
-        return itemService.createItem(item, ownerId);
+    public ItemDto createItem(@RequestHeader(value = SHARER_USER_ID) int ownerId,
+                              @RequestBody @Valid ItemUpdateDto itemDto) {
+        return itemService.createItem(itemDto, ownerId);
     }
 
     @PatchMapping("/{itemId}")
     public ResponseEntity<ItemDto> updateItem(@PathVariable int itemId,
-                                              @RequestHeader(value = "X-Sharer-User-Id") int ownerId,
+                                              @RequestHeader(value = SHARER_USER_ID) int ownerId,
                                               @Valid @RequestBody ItemUpdateDto item) {
         return new ResponseEntity<>(itemService.updateItem(itemId, item, ownerId), HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<List<ItemDto>> getAllItems(@RequestHeader(value = "X-Sharer-User-Id") int ownerId) {
+    public ResponseEntity<List<ItemDto>> getAllItems(@RequestHeader(value = SHARER_USER_ID) int ownerId) {
         return new ResponseEntity<>(itemService.getItemsOfOwner(ownerId), HttpStatus.OK);
     }
 
     @GetMapping("/{itemId}")
     public ResponseEntity<ItemDto> getItem(@PathVariable int itemId,
-                                           @RequestHeader(value = "X-Sharer-User-Id") int ownerId) {
+                                           @RequestHeader(value = SHARER_USER_ID) int ownerId) {
         return new ResponseEntity<>(itemService.getItem(itemId, ownerId), HttpStatus.OK);
     }
 

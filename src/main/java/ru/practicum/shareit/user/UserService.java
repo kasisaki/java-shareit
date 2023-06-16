@@ -3,14 +3,16 @@ package ru.practicum.shareit.user;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.ElementNotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserUpdateDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserStorage;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -19,12 +21,7 @@ public class UserService {
     private final UserStorage userStorage;
 
     public List<UserDto> findAll() {
-        List<User> usersList = userStorage.findAll();
-        ArrayList<UserDto> usersDtoList = new ArrayList<>();
-        for (User user : usersList) {
-            usersDtoList.add(UserMapper.toItemDto(user));
-        }
-        return usersDtoList;
+        return userStorage.findAll().stream().map(UserMapper::toItemDto).collect(Collectors.toList());
     }
 
     public UserDto getUser(int userId) {
@@ -36,16 +33,18 @@ public class UserService {
         throw new ElementNotFoundException("User with userId " + userId + " not found");
     }
 
-    public UserDto create(User user) {
-        if (user.getName() == null || user.getName().equals("")) {
-            //user.setName(user.getLogin());
+    public UserDto create(UserUpdateDto userUpdateDto) {
+        if (userUpdateDto.getName() == null || userUpdateDto.getName().equals("")) {
             log.warn("Name is not provided and set to match login");
         }
-        return UserMapper.toItemDto(userStorage.create(user));
+        if (userUpdateDto.getEmail() == null || !userUpdateDto.getEmail().contains("@")) {
+            throw new BadRequestException("Email is missing or in wrong format");
+        }
+        return UserMapper.toItemDto(userStorage.create(userUpdateDto));
     }
 
-    public UserDto update(User user, Integer id) {
-        return UserMapper.toItemDto(userStorage.update(user, id));
+    public UserDto update(UserUpdateDto userUpdateDto, Integer id) {
+        return UserMapper.toItemDto(userStorage.update(userUpdateDto, id));
     }
 
     public String delete(int userId) {

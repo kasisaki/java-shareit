@@ -11,8 +11,6 @@ import javax.validation.constraints.NotEmpty;
 @Builder
 public class User {
     private int id;
-    //@NotBlank(message = "Login must not be empty")
-    //@IsNotMatching(matchValue = ".*\\s+.*", message = "Login must not contain spaces")
     private String login;
     private String name;
     @Email
