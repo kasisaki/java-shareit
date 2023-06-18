@@ -1,11 +1,11 @@
 package ru.practicum.shareit.request.storage;
 
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequest;
 
 public interface RequestStorage {
-    Item create(Item request);
+    ItemRequest create(ItemRequest request);
 
-    Integer remove(Integer bookingId);
+    Long remove(Long bookingId);
 
-    Integer update(Item request);
+    Long update(ItemRequest request);
 }

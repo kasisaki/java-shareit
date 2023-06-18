@@ -9,9 +9,9 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.storage.ItemStorage;
+import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.storage.UserStorage;
+import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,52 +21,33 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class ItemService {
-    private final ItemStorage itemStorage;
-    private final UserStorage userStorage;
+    private final ItemRepository itemRepository;
+    private final UserRepository userRepository;
 
-    public ItemDto createItem(ItemUpdateDto itemUpdateDto, Integer ownerId) {
-        if (itemUpdateDto.getAvailable() == null || itemUpdateDto.getName().isEmpty()
-                || itemUpdateDto.getDescription() == null
-                || itemUpdateDto.getDescription().isEmpty()) {
-            throw new BadRequestException("Some required item fields are missing");
-        }
-        User user = userStorage.getUser(ownerId);
-        if (user == null) {
-            throw new ElementNotFoundException("User " + ownerId + "not found");
-        }
+    public ItemDto createItem(ItemUpdateDto itemUpdateDto, Long ownerId) {
+        User user = userRepository.findById(ownerId)
+                .orElseThrow(() -> new ElementNotFoundException("User with id " + ownerId + " is not found"));
         itemUpdateDto.setOwner(user);
-        return ItemMapper.toItemDto(itemStorage.createItem(itemUpdateDto));
+        Item item = new Item();
+        return ItemMapper.toItemDto(itemRepository.save(ItemMapper.updateItemWithDto(item, itemUpdateDto)));
     }
 
-    public ItemDto updateItem(Integer itemId, ItemUpdateDto itemDto, Integer ownerId) {
-
-        if (userStorage.getUser(ownerId) == null) {
-            throw new ElementNotFoundException("User with id " + ownerId + " not found");
+    public ItemDto updateItem(Long itemId, ItemUpdateDto itemUpdateDto, Long ownerId) {
+        Item item = itemRepository.save(ItemMapper.updateItemWithDto(
+                checkItemAndUserExistAndReturn(ownerId, itemId), itemUpdateDto));
+        if (!item.getOwner().getId().equals(ownerId)) {
+            throw new BadRequestException("User with id " + ownerId + " doest not own item " + itemId);
         }
-        if (itemStorage.getItem(itemId).getOwner().getId() != ownerId) {
-            throw new ElementNotFoundException("User with id " + ownerId + "does not have item with id " + itemId);
-        }
-
-        return ItemMapper.toItemDto(itemStorage.updateItem(itemDto, itemId));
+        return ItemMapper.toItemDto(item);
     }
 
-    public ItemDto getItem(Integer itemId, Integer ownerId) {
-        if (userStorage.getUser(ownerId) == null) {
-            throw new ElementNotFoundException("User with id " + ownerId + " not found");
-        }
-        return ItemMapper.toItemDto(itemStorage.getItem(itemId));
+    public ItemDto getItem(Long itemId, Long ownerId) {
+        return ItemMapper.toItemDto(checkItemAndUserExistAndReturn(ownerId, itemId));
     }
 
-    public List<ItemDto> getItemsOfOwner(Integer ownerId) {
-        ArrayList<Item> items = new ArrayList<>(itemStorage.getAllItems());
-        ArrayList<ItemDto> itemsDto = new ArrayList<>();
-
-        for (Item item : items) {
-            if (item.getOwner().getId() == ownerId) {
-                itemsDto.add(ItemMapper.toItemDto(item));
-            }
-        }
-        return itemsDto;
+    public List<ItemDto> getItemsOfOwner(Long ownerId) {
+        return itemRepository.findAllByOwnerIdOrderByIdAsc(ownerId).stream().map(ItemMapper::toItemDto)
+                .collect(Collectors.toList());
     }
 
     public List<ItemDto> searchItems(String searchStr) {
@@ -74,10 +55,18 @@ public class ItemService {
             return new ArrayList<>();
         }
 
-        return itemStorage.getAllItems().stream()
-                .filter(item -> item.getDescription().toLowerCase().contains(searchStr.toLowerCase()))
-                .filter(Item::getAvailable)
+        return itemRepository.findByDescriptionContainingIgnoreCaseAndAvailableTrue(searchStr).stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
+    }
+
+    private Item checkItemAndUserExistAndReturn(Long ownerId, Long itemId) {
+        if (!userRepository.existsById(ownerId)) {
+            throw new ElementNotFoundException("User with id " + ownerId + " not found");
+        }
+
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new ElementNotFoundException("Item with id " + itemId + " does not exist"));
+        return item;
     }
 }
