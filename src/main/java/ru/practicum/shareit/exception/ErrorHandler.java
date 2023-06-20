@@ -41,9 +41,6 @@ public class ErrorHandler {
         if (e.getMessage().contains("null value in column \"email\"")) {
             httpStatus = BAD_REQUEST;
         }
-        else if (e.getMessage().contains("duplicate key value")) {
-            httpStatus = CONFLICT;
-        }
         return new ResponseEntity<>(new ErrorResponse(httpStatus.value(), e.getMessage()), httpStatus);
     }
 

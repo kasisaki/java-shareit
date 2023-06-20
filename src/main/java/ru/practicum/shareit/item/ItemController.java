@@ -29,7 +29,7 @@ public class ItemController {
 
     @PostMapping("/{itemId}/comment")
     public ItemCommentDto createComment(@RequestHeader(value = SHARER_USER_ID) long ownerId,
-                              @RequestBody @Valid ItemCommentDto comment) {
+                                        @RequestBody @Valid ItemCommentDto comment) {
         return itemService.createItemComment(comment, ownerId);
     }
 
