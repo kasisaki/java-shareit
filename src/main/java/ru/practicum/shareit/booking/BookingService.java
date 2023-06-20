@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.storage.BookingRepository;
@@ -19,7 +18,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.booking.mapper.BookingMapper.toBookingDto;
-import static ru.practicum.shareit.booking.mapper.BookingMapper.toBookingResponseDto;
 import static ru.practicum.shareit.utils.BookingStatus.*;
 
 @Service
@@ -70,40 +68,40 @@ public class BookingService {
         return toBookingDto(booking);
     }
 
-    public BookingResponseDto getBooking(long requesterId, long bookingId) {
+    public BookingDto getBooking(long requesterId, long bookingId) {
         if (!userRepository.existsById(requesterId)) {
             throw new ElementNotFoundException("User does not exist");
         }
-        return toBookingResponseDto(bookingRepository.findById(bookingId)
+        return toBookingDto(bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ElementNotFoundException("Booking with id " + bookingId + "not found")));
     }
 
-    public List<BookingResponseDto> getUserBookingsState(long ownerId, String state) {
+    public List<BookingDto> getUserBookingsState(long ownerId, String state) {
         LocalDateTime now = LocalDateTime.now();
         switch (state) {
             case "ALL":
                 return bookingRepository
                         .findAllByRequestorId(ownerId)
                         .stream()
-                        .map(BookingMapper::toBookingResponseDto)
+                        .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
             case "CURRENT":
                 return bookingRepository
                         .findAllByRequestorIdAndStartBeforeAndEndAfterAndStatusIs(ownerId, now, now, APPROVED)
                         .stream()
-                        .map(BookingMapper::toBookingResponseDto)
+                        .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
             case "FUTURE":
                 return bookingRepository
                         .findAllByRequestorIdAndStartAfterAndEndAfterAndStatusIs(ownerId, now, now, APPROVED)
                         .stream()
-                        .map(BookingMapper::toBookingResponseDto)
+                        .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
             case "PAST":
                 return bookingRepository
                         .findAllByRequestorIdAndStartBeforeAndEndBeforeAndStatusIs(ownerId, now, now, APPROVED)
                         .stream()
-                        .map(BookingMapper::toBookingResponseDto)
+                        .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
             case "REJECTED":
                 return getByStatus(ownerId, REJECTED);
@@ -114,26 +112,26 @@ public class BookingService {
         return null;
     }
 
-    public List<BookingResponseDto> getUserItemsState(long ownerId, String state) {
+    public List<BookingDto> getUserItemsState(long ownerId, String state) {
         LocalDateTime now = LocalDateTime.now();
         switch (state) {
             case "ALL":
                 return bookingRepository
                         .findAllByRequestorId(ownerId)
                         .stream()
-                        .map(BookingMapper::toBookingResponseDto)
+                        .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
             case "CURRENT":
                 return bookingRepository
                         .findAllByRequestorIdAndStartBeforeAndEndAfterAndStatusIs(ownerId, now, now, APPROVED)
                         .stream()
-                        .map(BookingMapper::toBookingResponseDto)
+                        .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
             case "FUTURE":
                 return bookingRepository
                         .findAllByRequestorIdAndStartAfterAndEndAfterAndStatusIs(ownerId, now, now, APPROVED)
                         .stream()
-                        .map(BookingMapper::toBookingResponseDto)
+                        .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
             case "REJECTED":
                 return getByStatus(ownerId, REJECTED);
@@ -144,11 +142,11 @@ public class BookingService {
         throw new IllegalStateException("Unknown state: UNSUPPORTED_STATUS");
     }
 
-    private List<BookingResponseDto> getByStatus(Long ownerId, BookingStatus status) {
+    private List<BookingDto> getByStatus(Long ownerId, BookingStatus status) {
         return bookingRepository
                 .findAllByRequestorIdAndStatusIs(ownerId, status)
                 .stream()
-                .map(BookingMapper::toBookingResponseDto)
+                .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());
     }
 }

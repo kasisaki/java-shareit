@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.BookingResponseDto;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -32,19 +31,19 @@ public class BookingController {
     }
 
     @GetMapping("/{bookingId}")
-    public ResponseEntity<BookingResponseDto> getBooking(@PathVariable(name = "bookingId") long bookingId,
+    public ResponseEntity<BookingDto> getBooking(@PathVariable(name = "bookingId") long bookingId,
                                                          @RequestHeader(value = SHARER_USER_ID) long requesterId) {
         return new ResponseEntity<>(bookingService.getBooking(requesterId, bookingId), HttpStatus.OK);
     }
 
     @GetMapping()
-    public ResponseEntity<List<BookingResponseDto>> getUserBookingsState(@RequestParam(name = "state", defaultValue = "ALL") String state,
+    public ResponseEntity<List<BookingDto>> getUserBookingsState(@RequestParam(name = "state", defaultValue = "ALL") String state,
                                                               @RequestHeader(value = SHARER_USER_ID) long ownerId) {
         return new ResponseEntity<>(bookingService.getUserBookingsState(ownerId, state), HttpStatus.OK);
     }
 
     @GetMapping("/owner")
-    public ResponseEntity<List<BookingResponseDto>> getUserItemsState(@RequestParam(name = "state", defaultValue = "ALL") String state,
+    public ResponseEntity<List<BookingDto>> getUserItemsState(@RequestParam(name = "state", defaultValue = "ALL") String state,
                                                                        @RequestHeader(value = SHARER_USER_ID) long ownerId) {
         return new ResponseEntity<>(bookingService.getUserItemsState(ownerId, state), HttpStatus.OK);
     }
