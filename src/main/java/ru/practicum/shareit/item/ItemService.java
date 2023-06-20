@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.ElementNotFoundException;
+import ru.practicum.shareit.item.dto.ItemCommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemUpdateDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
@@ -68,5 +69,9 @@ public class ItemService {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ElementNotFoundException("Item with id " + itemId + " does not exist"));
         return item;
+    }
+
+    public ItemCommentDto createItemComment(ItemCommentDto comment, long ownerId) {
+        return null;
     }
 }
