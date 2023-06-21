@@ -5,7 +5,6 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.utils.BookingStatus;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,7 +23,17 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findAllByRequestorIdAndStatusIs(Long requestorId, BookingStatus status);
 
-    @Transactional
-    List<Booking> findAllByItemOwnerIdAndStatusIs(Long itemOwnerId, BookingStatus statusStatus);
+    List<Booking> findAllByItemOwnerId(Long itemOwnerId);
+
+    List<Booking> findAllByItemOwnerIdAndStartBeforeAndEndAfterAndStatusIs(
+            Long requestorId, LocalDateTime start, LocalDateTime end, BookingStatus status);
+
+    List<Booking> findAllByItemOwnerIdAndStartAfterAndEndAfterAndStatusIs(
+            Long requestorId, LocalDateTime start, LocalDateTime end, BookingStatus status);
+
+    List<Booking> findAllByItemOwnerIdAndStartBeforeAndEndBeforeAndStatusIs(
+            Long requestorId, LocalDateTime start, LocalDateTime end, BookingStatus status);
+
+    List<Booking> findAllByItemOwnerIdAndStatusIs(Long requestorId, BookingStatus status);
 
 }

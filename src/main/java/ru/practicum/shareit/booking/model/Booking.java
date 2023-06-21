@@ -24,12 +24,15 @@ public class Booking {
     @NotNull
     @Column(name = "end_date")
     private LocalDateTime end;
+
     @ManyToOne
     @JoinColumn(name = "item_id")
     private Item item;
+
     @ManyToOne
-    @JoinColumn(name = "requester_id")
+    @JoinColumn(name = "requestor_id")
     private User requestor;
-    @Column
+
+    @Enumerated(EnumType.ORDINAL)
     private BookingStatus status;
 }

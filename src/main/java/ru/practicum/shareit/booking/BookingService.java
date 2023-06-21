@@ -46,12 +46,13 @@ public class BookingService {
         throw new BadRequestException("Item is not available");
     }
 
-    public BookingDto approveBooking(long bookingId, boolean approved, Long userId) {
+    public BookingDto approveBooking(Long bookingId, boolean approved, Long userId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ElementNotFoundException("Booking with id " + bookingId + "not found"));
         if (booking.getRequestor().getId().equals(userId)) {
             throw new ElementNotFoundException("Requester cannot approve requested booking");
-        } else if (booking.getRequestor().getId().equals(booking.getItem().getOwner().getId())) {
+        }
+        if (booking.getItem().getOwner().getId().equals(userId)) {
             if (booking.getStatus().equals(APPROVED)) {
                 throw new BadRequestException("Already APPROVED");
             } else {
@@ -60,15 +61,14 @@ public class BookingService {
                 } else {
                     booking.setStatus(REJECTED);
                 }
+                return toBookingDto(bookingRepository.save(booking));
             }
         } else {
             throw new BadRequestException("Not allowed");
         }
-
-        return toBookingDto(booking);
     }
 
-    public BookingDto getBooking(long requesterId, long bookingId) {
+    public BookingDto getBooking(Long requesterId, Long bookingId) {
         if (!userRepository.existsById(requesterId)) {
             throw new ElementNotFoundException("User does not exist");
         }
@@ -76,75 +76,99 @@ public class BookingService {
                 .orElseThrow(() -> new ElementNotFoundException("Booking with id " + bookingId + "not found")));
     }
 
-    public List<BookingDto> getUserBookingsState(long ownerId, String state) {
+    public List<BookingDto> getUserBookingsState(Long requestorId, String state) {
+        if (!userRepository.existsById(requestorId)) {
+            throw new ElementNotFoundException("User does not exist");
+        }
         LocalDateTime now = LocalDateTime.now();
         switch (state) {
             case "ALL":
                 return bookingRepository
-                        .findAllByRequestorId(ownerId)
+                        .findAllByRequestorId(requestorId)
                         .stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
             case "CURRENT":
                 return bookingRepository
-                        .findAllByRequestorIdAndStartBeforeAndEndAfterAndStatusIs(ownerId, now, now, APPROVED)
+                        .findAllByRequestorIdAndStartBeforeAndEndAfterAndStatusIs(requestorId, now, now, APPROVED)
                         .stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
             case "FUTURE":
                 return bookingRepository
-                        .findAllByRequestorIdAndStartAfterAndEndAfterAndStatusIs(ownerId, now, now, APPROVED)
+                        .findAllByRequestorIdAndStartAfterAndEndAfterAndStatusIs(requestorId, now, now, APPROVED)
                         .stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
             case "PAST":
                 return bookingRepository
-                        .findAllByRequestorIdAndStartBeforeAndEndBeforeAndStatusIs(ownerId, now, now, APPROVED)
+                        .findAllByRequestorIdAndStartBeforeAndEndBeforeAndStatusIs(requestorId, now, now, APPROVED)
                         .stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
             case "REJECTED":
-                return getByStatus(ownerId, REJECTED);
+                return getByStatusAndRequestor(requestorId, REJECTED);
             case "WAITING":
-                return getByStatus(ownerId, WAITING);
+                return getByStatusAndRequestor(requestorId, WAITING);
 
         }
         return null;
     }
 
-    public List<BookingDto> getUserItemsState(long ownerId, String state) {
+    public List<BookingDto> getUserItemsState(Long ownerId, String state) {
+        if (!userRepository.existsById(ownerId)) {
+            throw new ElementNotFoundException("User does not exist");
+        }
+
         LocalDateTime now = LocalDateTime.now();
+        log.warn("THE STATE IS --------" + state);
+
         switch (state) {
             case "ALL":
                 return bookingRepository
-                        .findAllByRequestorId(ownerId)
+                        .findAllByItemOwnerId(ownerId)
                         .stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
+
             case "CURRENT":
                 return bookingRepository
-                        .findAllByRequestorIdAndStartBeforeAndEndAfterAndStatusIs(ownerId, now, now, APPROVED)
+                        .findAllByItemOwnerIdAndStartBeforeAndEndAfterAndStatusIs(ownerId, now, now, APPROVED)
                         .stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
             case "FUTURE":
                 return bookingRepository
-                        .findAllByRequestorIdAndStartAfterAndEndAfterAndStatusIs(ownerId, now, now, APPROVED)
+                        .findAllByItemOwnerIdAndStartAfterAndEndAfterAndStatusIs(ownerId, now, now, APPROVED)
+                        .stream()
+                        .map(BookingMapper::toBookingDto)
+                        .collect(Collectors.toList());
+            case "PAST":
+                return bookingRepository
+                        .findAllByItemOwnerIdAndStartBeforeAndEndBeforeAndStatusIs(ownerId, now, now, APPROVED)
                         .stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
             case "REJECTED":
-                return getByStatus(ownerId, REJECTED);
+                return getByStatusAndItemOwner(ownerId, REJECTED);
             case "WAITING":
-                return getByStatus(ownerId, WAITING);
+                return getByStatusAndItemOwner(ownerId, WAITING);
 
         }
         throw new IllegalStateException("Unknown state: UNSUPPORTED_STATUS");
     }
 
-    private List<BookingDto> getByStatus(Long ownerId, BookingStatus status) {
+    private List<BookingDto> getByStatusAndRequestor(Long requestorId, BookingStatus status) {
         return bookingRepository
-                .findAllByRequestorIdAndStatusIs(ownerId, status)
+                .findAllByRequestorIdAndStatusIs(requestorId, status)
+                .stream()
+                .map(BookingMapper::toBookingDto)
+                .collect(Collectors.toList());
+    }
+
+    private List<BookingDto> getByStatusAndItemOwner(Long itemOwnerId, BookingStatus status) {
+        return bookingRepository
+                .findAllByItemOwnerIdAndStatusIs(itemOwnerId, status)
                 .stream()
                 .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());
