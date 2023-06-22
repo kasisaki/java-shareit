@@ -84,25 +84,25 @@ public class BookingService {
         switch (state) {
             case "ALL":
                 return bookingRepository
-                        .findAllByRequestorId(requestorId)
+                        .findAllByRequestorIdOrderByStartDesc(requestorId)
                         .stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
             case "CURRENT":
                 return bookingRepository
-                        .findAllByRequestorIdAndStartBeforeAndEndAfterAndStatusIs(requestorId, now, now, APPROVED)
+                        .findAllByRequestorIdAndStartBeforeAndEndAfterAndStatusIsOrderByStartDesc(requestorId, now, now, APPROVED)
                         .stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
             case "FUTURE":
                 return bookingRepository
-                        .findAllByRequestorIdAndStartAfterAndEndAfterAndStatusIs(requestorId, now, now, APPROVED)
+                        .findAllByRequestorIdAndStartAfterAndStatusIsOrderByStartDesc(requestorId, now, APPROVED)
                         .stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
             case "PAST":
                 return bookingRepository
-                        .findAllByRequestorIdAndStartBeforeAndEndBeforeAndStatusIs(requestorId, now, now, APPROVED)
+                        .findAllByRequestorIdAndEndBeforeAndStatusIsOrderByStartDesc(requestorId, now, APPROVED)
                         .stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
@@ -126,26 +126,26 @@ public class BookingService {
         switch (state) {
             case "ALL":
                 return bookingRepository
-                        .findAllByItemOwnerId(ownerId)
+                        .findAllByItemOwnerIdOrderByStartDesc(ownerId)
                         .stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
 
             case "CURRENT":
                 return bookingRepository
-                        .findAllByItemOwnerIdAndStartBeforeAndEndAfterAndStatusIs(ownerId, now, now, APPROVED)
+                        .findAllByItemOwnerIdAndStartBeforeAndEndAfterAndStatusIsOrderByStartDesc(ownerId, now, now, APPROVED)
                         .stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
             case "FUTURE":
                 return bookingRepository
-                        .findAllByItemOwnerIdAndStartAfterAndEndAfterAndStatusIs(ownerId, now, now, APPROVED)
+                        .findAllByItemOwnerIdAndStartAfterAndStatusIsOrderByStartDesc(ownerId, now, APPROVED)
                         .stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
             case "PAST":
                 return bookingRepository
-                        .findAllByItemOwnerIdAndStartBeforeAndEndBeforeAndStatusIs(ownerId, now, now, APPROVED)
+                        .findAllByItemOwnerIdAndEndBeforeAndStatusIsOrderByStartDesc(ownerId, now, APPROVED)
                         .stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
@@ -160,7 +160,7 @@ public class BookingService {
 
     private List<BookingDto> getByStatusAndRequestor(Long requestorId, BookingStatus status) {
         return bookingRepository
-                .findAllByRequestorIdAndStatusIs(requestorId, status)
+                .findAllByRequestorIdAndStatusIsOrderByStartDesc(requestorId, status)
                 .stream()
                 .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());
@@ -168,7 +168,7 @@ public class BookingService {
 
     private List<BookingDto> getByStatusAndItemOwner(Long itemOwnerId, BookingStatus status) {
         return bookingRepository
-                .findAllByItemOwnerIdAndStatusIs(itemOwnerId, status)
+                .findAllByItemOwnerIdAndStatusIsOrderByStartDesc(itemOwnerId, status)
                 .stream()
                 .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());
