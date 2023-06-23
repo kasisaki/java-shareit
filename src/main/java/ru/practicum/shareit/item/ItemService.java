@@ -57,7 +57,13 @@ public class ItemService {
     }
 
     public ItemDto getItem(Long itemId, Long ownerId) {
-        return retrieveWithBookingInfo(checkItemAndUserExistAndReturn(ownerId, itemId));
+        ItemDto result = retrieveWithBookingInfo(checkItemAndUserExistAndReturn(ownerId, itemId));
+        if (!itemRepository.existsByIdAndOwnerId(itemId, ownerId)) {
+            result.setLastBooking(null);
+            result.setNextBooking(null);
+        }
+
+        return result;
     }
 
     public List<ItemDto> getItemsOfOwner(Long ownerId) {
@@ -105,7 +111,7 @@ public class ItemService {
         LocalDateTime now = LocalDateTime.now();
 
         BookingDtoShort lastBooking = toBookingDtoShort(bookingRepository
-                .findFirstByStatusAndItemIdAndEndIsBeforeOrderByStartDesc(APPROVED, item.getId(), now));
+                .findFirstByStatusAndItemIdAndStartIsBeforeOrderByStartDesc(APPROVED, item.getId(), now));
 
         BookingDtoShort nextBooking = toBookingDtoShort(bookingRepository
                 .findFirstByStatusAndItemIdAndStartIsAfterOrderByStartAsc(APPROVED, item.getId(), now));

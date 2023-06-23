@@ -10,5 +10,7 @@ import java.util.List;
 public interface ItemRepository extends JpaRepository<Item, Long> {
     List<Item> findAllByOwnerIdOrderByIdAsc(Long ownerId);
 
+    Boolean existsByIdAndOwnerId(Long itemId, Long ownerId);
+
     List<Item> findByDescriptionContainingIgnoreCaseAndAvailableTrue(String search);
 }

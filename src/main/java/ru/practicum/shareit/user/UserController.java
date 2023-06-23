@@ -24,12 +24,12 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<List<UserDto>> findAllUsers() {
-        return new ResponseEntity<>(userService.findAll(), HttpStatus.OK); //вернет список пользователей или пустой
+        return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUser(@PathVariable(required = false) long id) {
-        return new ResponseEntity<>(userService.getUser(id), HttpStatus.OK); //вернет пользователя или исключение
+        return new ResponseEntity<>(userService.getUser(id), HttpStatus.OK);
     }
 
     @PostMapping
