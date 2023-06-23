@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.dto.ItemCommentDto;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemUpdateDto;
 
@@ -28,9 +28,10 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public ItemCommentDto createComment(@RequestHeader(value = SHARER_USER_ID) long ownerId,
-                                        @RequestBody @Valid ItemCommentDto comment) {
-        return itemService.createItemComment(comment, ownerId);
+    public CommentDto createComment(@RequestHeader(value = SHARER_USER_ID) long userId,
+                                    @RequestBody @Valid CommentDto comment,
+                                    @PathVariable(name = "itemId") long itemId) {
+        return itemService.createItemComment(comment, userId, itemId);
     }
 
     @PatchMapping("/{itemId}")

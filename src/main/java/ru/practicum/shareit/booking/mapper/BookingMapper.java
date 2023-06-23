@@ -1,10 +1,14 @@
 package ru.practicum.shareit.booking.mapper;
 
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingDtoShort;
 import ru.practicum.shareit.booking.model.Booking;
 
 public class BookingMapper {
     public static BookingDto toBookingDto(Booking booking) {
+        if (booking == null) {
+            return null;
+        }
         return BookingDto.builder()
                 .start(booking.getStart())
                 .id(booking.getId())
@@ -13,6 +17,18 @@ public class BookingMapper {
                 .booker(booking.getRequestor())
                 .item(booking.getItem())
                 .itemId(booking.getItem().getId())
+                .build();
+    }
+
+    public static BookingDtoShort toBookingDtoShort(Booking booking) {
+        if (booking == null) {
+            return null;
+        }
+        return BookingDtoShort.builder()
+                .id(booking.getId())
+                .bookerId(booking.getRequestor().getId())
+                .start(booking.getStart())
+                .end(booking.getEnd())
                 .build();
     }
 

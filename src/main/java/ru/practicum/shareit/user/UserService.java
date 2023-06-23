@@ -20,11 +20,11 @@ public class UserService {
     private final UserRepository userRepository;
 
     public List<UserDto> findAll() {
-        return userRepository.findAll().stream().map(UserMapper::toItemDto).collect(Collectors.toList());
+        return userRepository.findAll().stream().map(UserMapper::toUserDto).collect(Collectors.toList());
     }
 
     public UserDto getUser(Long userId) {
-        return UserMapper.toItemDto(userRepository.findById(userId)
+        return UserMapper.toUserDto(userRepository.findById(userId)
                 .orElseThrow(() -> new ElementNotFoundException("User with userId " + userId + " not found")));
     }
 
@@ -33,14 +33,14 @@ public class UserService {
             log.warn("Name is not provided and set to match login");
         }
         User user = new User();
-        return UserMapper.toItemDto(userRepository.save(UserMapper.updateUserFromDto(user, userUpdateDto)));
+        return UserMapper.toUserDto(userRepository.save(UserMapper.updateUserFromDto(user, userUpdateDto)));
     }
 
     public UserDto update(UserUpdateDto userUpdateDto, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ElementNotFoundException("User with userId " + userId + " not found"));
 
-        return UserMapper.toItemDto(userRepository.save(UserMapper.updateUserFromDto(user, userUpdateDto)));
+        return UserMapper.toUserDto(userRepository.save(UserMapper.updateUserFromDto(user, userUpdateDto)));
     }
 
     public String delete(Long userId) {

@@ -25,8 +25,8 @@ public class ItemComment {
 
 
     @ManyToOne
-    @JoinColumn(name = "commentAuthor")
-    private User commentAuthor;
+    @JoinColumn(name = "comment_author")
+    private User author;
 
     @Column(name = "time_created")
     private LocalDateTime created;

@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ru.practicum.shareit.exception.errorResponse.ErrorResponse;
 
 import javax.validation.ConstraintViolationException;
@@ -14,7 +15,7 @@ import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
 @RestControllerAdvice
-public class ErrorHandler {
+public class ErrorHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> catchBadRequestException(final BadRequestException e) {
@@ -49,4 +50,13 @@ public class ErrorHandler {
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(new ErrorResponse(BAD_REQUEST.value(), e.getMessage()), BAD_REQUEST);
     }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> catchIllegalStatusException(final IllegalStatusException e) {
+        log.error(e.getMessage(), e);
+        ErrorResponse errorResponse = new ErrorResponse(BAD_REQUEST.value(), e.getMessage());
+        return new ResponseEntity<>(errorResponse, BAD_REQUEST);
+    }
+
+
 }
