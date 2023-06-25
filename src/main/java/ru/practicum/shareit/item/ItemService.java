@@ -24,11 +24,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.practicum.shareit.booking.mapper.BookingMapper.toBookingDtoShort;
-import static ru.practicum.shareit.item.mapper.CommentMapper.mapCommentRequestDtoToComment;
-import static ru.practicum.shareit.item.mapper.CommentMapper.mapCommentToCommentResponseDto;
-import static ru.practicum.shareit.item.mapper.ItemMapper.toItemDto;
-import static ru.practicum.shareit.utils.BookingStatus.APPROVED;
+еуьзыфмуimport static ru.practicum.shareit.booking.BookingMapper.toBookingDtoShort;
+        import static ru.practicum.shareit.item.mapper.CommentMapper.mapCommentRequestDtoToComment;
+        import static ru.practicum.shareit.item.mapper.CommentMapper.mapCommentToCommentResponseDto;
+        import static ru.practicum.shareit.item.mapper.ItemMapper.toItemDto;
+        import static ru.practicum.shareit.utils.BookingStatus.APPROVED;
 
 @Service
 @RequiredArgsConstructor
