@@ -14,12 +14,12 @@ import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.storage.UserRepository;
 import ru.practicum.shareit.utils.BookingStatus;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.booking.mapper.BookingMapper.toBookingDto;
 import static ru.practicum.shareit.utils.BookingStatus.*;
+import static ru.practicum.shareit.utils.DateUtils.now;
 
 @Service
 @Slf4j
@@ -70,9 +70,7 @@ public class BookingService {
     }
 
     public BookingDto getBooking(Long requesterId, Long bookingId) {
-        if (!userRepository.existsById(requesterId)) {
-            throw new ElementNotFoundException("User does not exist");
-        }
+        userExistOrThrow(requesterId);
 
         if (!bookingRepository.existsByIdAndRequestorId(bookingId, requesterId)) {
             if (!bookingRepository.existsByIdAndItemOwnerId(bookingId, requesterId)) {
@@ -84,10 +82,8 @@ public class BookingService {
     }
 
     public List<BookingDto> getUserBookingsState(Long requestorId, String state) {
-        if (!userRepository.existsById(requestorId)) {
-            throw new ElementNotFoundException("User does not exist");
-        }
-        LocalDateTime now = LocalDateTime.now();
+        userExistOrThrow(requestorId);
+
         switch (state) {
             case "ALL":
                 return bookingRepository
@@ -97,19 +93,19 @@ public class BookingService {
                         .collect(Collectors.toList());
             case "CURRENT":
                 return bookingRepository
-                        .findAllByRequestorIdAndStartBeforeAndEndAfterOrderByStartDesc(requestorId, now, now)
+                        .findAllByRequestorIdAndStartBeforeAndEndAfterOrderByStartDesc(requestorId, now(), now())
                         .stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
             case "FUTURE":
                 return bookingRepository
-                        .findAllByRequestorIdAndStartAfterOrderByStartDesc(requestorId, now)
+                        .findAllByRequestorIdAndStartAfterOrderByStartDesc(requestorId, now())
                         .stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
             case "PAST":
                 return bookingRepository
-                        .findAllByRequestorIdAndEndBeforeOrderByStartDesc(requestorId, now)
+                        .findAllByRequestorIdAndEndBeforeOrderByStartDesc(requestorId, now())
                         .stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
@@ -125,12 +121,7 @@ public class BookingService {
     }
 
     public List<BookingDto> getUserItemsState(Long ownerId, String state) {
-        if (!userRepository.existsById(ownerId)) {
-            throw new ElementNotFoundException("User does not exist");
-        }
-
-        LocalDateTime now = LocalDateTime.now();
-        log.warn("THE STATE IS --------" + state);
+        userExistOrThrow(ownerId);
 
         switch (state) {
             case "ALL":
@@ -142,19 +133,19 @@ public class BookingService {
 
             case "CURRENT":
                 return bookingRepository
-                        .findAllByItemOwnerIdAndStartBeforeAndEndAfterOrderByStartDesc(ownerId, now, now)
+                        .findAllByItemOwnerIdAndStartBeforeAndEndAfterOrderByStartDesc(ownerId, now(), now())
                         .stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
             case "FUTURE":
                 return bookingRepository
-                        .findAllByItemOwnerIdAndStartAfterOrderByStartDesc(ownerId, now)
+                        .findAllByItemOwnerIdAndStartAfterOrderByStartDesc(ownerId, now())
                         .stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
             case "PAST":
                 return bookingRepository
-                        .findAllByItemOwnerIdAndEndBeforeOrderByStartDesc(ownerId, now)
+                        .findAllByItemOwnerIdAndEndBeforeOrderByStartDesc(ownerId, now())
                         .stream()
                         .map(BookingMapper::toBookingDto)
                         .collect(Collectors.toList());
@@ -181,5 +172,11 @@ public class BookingService {
                 .stream()
                 .map(BookingMapper::toBookingDto)
                 .collect(Collectors.toList());
+    }
+
+    private void userExistOrThrow(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new ElementNotFoundException("User with id " + userId + " does not exist");
+        }
     }
 }

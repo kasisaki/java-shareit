@@ -29,6 +29,7 @@ import static ru.practicum.shareit.item.mapper.CommentMapper.mapCommentRequestDt
 import static ru.practicum.shareit.item.mapper.CommentMapper.mapCommentToCommentResponseDto;
 import static ru.practicum.shareit.item.mapper.ItemMapper.toItemDto;
 import static ru.practicum.shareit.utils.BookingStatus.APPROVED;
+import static ru.practicum.shareit.utils.DateUtils.now;
 
 @Service
 @RequiredArgsConstructor
@@ -108,13 +109,11 @@ public class ItemService {
     private ItemDto retrieveWithBookingInfo(Item item) {
         List<ItemComment> comments = commentRepository.findByItemId(item.getId());
 
-        LocalDateTime now = LocalDateTime.now();
-
         BookingDtoShort lastBooking = toBookingDtoShort(bookingRepository
-                .findFirstByStatusAndItemIdAndStartIsBeforeOrderByStartDesc(APPROVED, item.getId(), now));
+                .findFirstByStatusAndItemIdAndStartIsBeforeOrderByStartDesc(APPROVED, item.getId(), now()));
 
         BookingDtoShort nextBooking = toBookingDtoShort(bookingRepository
-                .findFirstByStatusAndItemIdAndStartIsAfterOrderByStartAsc(APPROVED, item.getId(), now));
+                .findFirstByStatusAndItemIdAndStartIsAfterOrderByStartAsc(APPROVED, item.getId(), now()));
 
         return toItemDto(item, nextBooking, lastBooking,
                 comments.stream().map(CommentMapper::mapCommentToCommentResponseDto).collect(Collectors.toList()));
