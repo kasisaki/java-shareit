@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.practicum.shareit.booking.BookingMapper.toBookingDtoShort;
+import static ru.practicum.shareit.booking.BookingMapper.bookingToDtoShort;
 import static ru.practicum.shareit.item.mapper.CommentMapper.mapCommentRequestDtoToComment;
 import static ru.practicum.shareit.item.mapper.CommentMapper.mapCommentToCommentResponseDto;
 import static ru.practicum.shareit.item.mapper.ItemMapper.toItemDto;
@@ -39,7 +39,7 @@ public class ItemService {
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
 
-    public ItemDto createItem(ItemUpdateDto itemUpdateDto, Long ownerId) {
+    public ItemDto create(ItemUpdateDto itemUpdateDto, Long ownerId) {
         User user = userRepository.findById(ownerId)
                 .orElseThrow(() -> new ElementNotFoundException("User with id " + ownerId + " is not found"));
         itemUpdateDto.setOwner(user);
@@ -110,10 +110,10 @@ public class ItemService {
 
         LocalDateTime now = LocalDateTime.now();
 
-        BookingDtoShort lastBooking = toBookingDtoShort(bookingRepository
+        BookingDtoShort lastBooking = bookingToDtoShort(bookingRepository
                 .findFirstByStatusAndItemIdAndStartIsBeforeOrderByStartDesc(APPROVED, item.getId(), now));
 
-        BookingDtoShort nextBooking = toBookingDtoShort(bookingRepository
+        BookingDtoShort nextBooking = bookingToDtoShort(bookingRepository
                 .findFirstByStatusAndItemIdAndStartIsAfterOrderByStartAsc(APPROVED, item.getId(), now));
 
         return toItemDto(item, nextBooking, lastBooking,

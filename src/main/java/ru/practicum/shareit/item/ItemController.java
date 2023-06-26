@@ -24,7 +24,7 @@ public class ItemController {
     @PostMapping
     public ItemDto createItem(@RequestHeader(value = SHARER_USER_ID) long ownerId,
                               @RequestBody @Valid ItemUpdateDto itemDto) {
-        return itemService.createItem(itemDto, ownerId);
+        return itemService.create(itemDto, ownerId);
     }
 
     @PostMapping("/{itemId}/comment")

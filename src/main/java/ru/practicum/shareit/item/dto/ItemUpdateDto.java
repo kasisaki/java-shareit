@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @Builder
 public class ItemUpdateDto {
-    private int id;
+    private Long id;
     @NotEmpty
     private String name;
     @NotEmpty

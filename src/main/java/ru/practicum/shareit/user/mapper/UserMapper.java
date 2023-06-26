@@ -8,6 +8,9 @@ import ru.practicum.shareit.user.model.User;
 public class UserMapper {
 
     public static UserDto toUserDto(User user) {
+        if (user == null) {
+            return null;
+        }
         return UserDto.builder()
                 .id(user.getId())
                 .name(user.getName())
@@ -16,6 +19,12 @@ public class UserMapper {
     }
 
     public static User updateUserFromDto(User user, UserUpdateDto userUpdateDto) {
+        if (user == null) {
+            return null;
+        }
+        if (userUpdateDto == null) {
+            return user;
+        }
         if (userUpdateDto.getEmail() != null) {
             user.setEmail(userUpdateDto.getEmail());
         }
