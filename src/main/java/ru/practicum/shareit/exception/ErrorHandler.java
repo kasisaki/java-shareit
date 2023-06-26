@@ -16,7 +16,7 @@ import static org.springframework.http.HttpStatus.*;
 @Slf4j
 @RestControllerAdvice
 public class ErrorHandler extends ResponseEntityExceptionHandler {
-
+    // наследуемся чтобы не писать множество стандартных обработчиков
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> catchBadRequestException(final BadRequestException e) {
         log.error(e.getMessage(), e);

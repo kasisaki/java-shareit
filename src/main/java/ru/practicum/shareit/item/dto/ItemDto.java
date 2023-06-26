@@ -9,12 +9,12 @@ import java.util.List;
 @Data
 @Builder
 public class ItemDto {
-    BookingDtoShort lastBooking;
-    BookingDtoShort nextBooking;
-    List<CommentDto> comments;
     private Long id;
     private String name;
     private String description;
     private Boolean available;
+    private List<CommentDto> comments;
+    private BookingDtoShort lastBooking;
+    private BookingDtoShort nextBooking;
     private Integer request;
 }
