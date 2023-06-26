@@ -13,18 +13,18 @@ public class UserMapperTests {
 
     @Test
     public void testToUserDto() throws Exception {
-        assertEquals(user1.getId(), toUserDto(user1).getId());
-        assertEquals(user1.getName(), toUserDto(user1).getName());
-        assertEquals(user1.getEmail(), toUserDto(user1).getEmail());
-        assertNotSame(user1, toUserDto(user1));
+        assertEquals(userToUpdate.getId(), toUserDto(user1).getId());
+        assertEquals(userToUpdate.getName(), toUserDto(user1).getName());
+        assertEquals(userToUpdate.getEmail(), toUserDto(user1).getEmail());
+        assertNotSame(userToUpdate, toUserDto(user1));
     }
 
     @Test
     public void testUpdateUserFromDto() throws Exception {
-        assertNotEquals(userDtoJustName.getName(), user1.getName());
-        assertEquals(userDtoJustName.getName(), updateUserFromDto(user1, userDtoJustName).getName());
-        assertEquals(userDtoJustEmail.getEmail(), updateUserFromDto(user1, userDtoJustEmail).getEmail());
-        assertEquals(userDtoJustName.getName(), user1.getName());
+        assertNotEquals(userDtoJustName.getName(), userToUpdate.getName());
+        assertEquals(userDtoJustName.getName(), updateUserFromDto(userToUpdate, userDtoJustName).getName());
+        assertEquals(userDtoJustEmail.getEmail(), updateUserFromDto(userToUpdate, userDtoJustEmail).getEmail());
+        assertEquals(userDtoJustName.getName(), userToUpdate.getName());
     }
 
     @Test

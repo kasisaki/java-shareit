@@ -25,6 +25,12 @@ public class CommonData {
             "userEmail@email.com"
     );
 
+    public static final User userToUpdate = new User(
+            22L,
+            "userToUpdateName",
+            "userToUpdatel@email.com"
+    );
+
     public static final UserUpdateDto userDtoJustEmail = UserUpdateDto.builder()
             .email("dtoJustEmail@email.com")
             .build();
