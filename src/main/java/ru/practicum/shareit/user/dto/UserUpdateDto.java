@@ -1,14 +1,15 @@
 package ru.practicum.shareit.user.dto;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 
-@Data
+@Getter
+@Setter
 @Builder
 public class UserUpdateDto {
-    private int id;
-    private String login;
+    private Long id;
     private String name;
     private String email;
 }

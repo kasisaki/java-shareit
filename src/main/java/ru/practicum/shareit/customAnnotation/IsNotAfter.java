@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = DateValidator.class)
 @Documented
-public @interface IsAfter {
+public @interface IsNotAfter {
     String message() default "Wrong date";
 
     Class<?>[] groups() default {};

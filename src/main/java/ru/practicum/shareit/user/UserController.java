@@ -24,12 +24,12 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<List<UserDto>> findAllUsers() {
-        return new ResponseEntity<>(userService.findAll(), HttpStatus.OK); //вернет список пользователей или пустой
+        return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUser(@PathVariable(required = false) int id) {
-        return new ResponseEntity<>(userService.getUser(id), HttpStatus.OK); //вернет пользователя или исключение
+    public ResponseEntity<UserDto> getUser(@PathVariable(required = false) long id) {
+        return new ResponseEntity<>(userService.getUser(id), HttpStatus.OK);
     }
 
     @PostMapping
@@ -38,13 +38,13 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable int id,
+    public ResponseEntity<UserDto> updateUser(@PathVariable long id,
                                               @RequestBody UserUpdateDto userUpdateDto) {
         return new ResponseEntity<>(userService.update(userUpdateDto, id), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable int id) {
+    public ResponseEntity<String> deleteUser(@PathVariable long id) {
         return new ResponseEntity<>(userService.delete(id), HttpStatus.OK);
     }
 }

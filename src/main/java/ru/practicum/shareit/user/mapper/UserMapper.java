@@ -7,7 +7,7 @@ import ru.practicum.shareit.user.model.User;
 
 public class UserMapper {
 
-    public static UserDto toItemDto(User user) {
+    public static UserDto toUserDto(User user) {
         return UserDto.builder()
                 .id(user.getId())
                 .name(user.getName())
@@ -15,15 +15,12 @@ public class UserMapper {
                 .build();
     }
 
-    public static User userUpdateFromDto(User user, UserUpdateDto userUpdateDto) {
+    public static User updateUserFromDto(User user, UserUpdateDto userUpdateDto) {
         if (userUpdateDto.getEmail() != null) {
             user.setEmail(userUpdateDto.getEmail());
         }
         if (userUpdateDto.getName() != null) {
             user.setName(userUpdateDto.getName());
-        }
-        if (userUpdateDto.getLogin() != null) {
-            user.setLogin(userUpdateDto.getLogin());
         }
         return user;
     }
