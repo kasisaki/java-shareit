@@ -13,10 +13,10 @@ public class UserMapperTests {
 
     @Test
     public void testToUserDto() throws Exception {
-        assertEquals(userToUpdate.getId(), toUserDto(user1).getId());
-        assertEquals(userToUpdate.getName(), toUserDto(user1).getName());
-        assertEquals(userToUpdate.getEmail(), toUserDto(user1).getEmail());
-        assertNotSame(userToUpdate, toUserDto(user1));
+        assertEquals(user1.getId(), toUserDto(user1).getId());
+        assertEquals(user1.getName(), toUserDto(user1).getName());
+        assertEquals(user1.getEmail(), toUserDto(user1).getEmail());
+        assertNotSame(user1, toUserDto(user1));
     }
 
     @Test

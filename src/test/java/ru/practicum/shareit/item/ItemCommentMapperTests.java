@@ -3,36 +3,36 @@ package ru.practicum.shareit.item;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.CommonData;
+import ru.practicum.shareit.item.model.ItemComment;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static ru.practicum.shareit.CommonData.*;
 import static ru.practicum.shareit.booking.BookingMapper.bookingToDtoShort;
+import static ru.practicum.shareit.item.mapper.CommentMapper.mapCommentRequestDtoToComment;
+import static ru.practicum.shareit.item.mapper.CommentMapper.mapCommentToCommentResponseDto;
 import static ru.practicum.shareit.item.mapper.ItemMapper.toItemDto;
 import static ru.practicum.shareit.item.mapper.ItemMapper.updateItemWithDto;
+import static ru.practicum.shareit.utils.DateUtils.now;
 
 @SpringBootTest
-public class ItemMapperTests {
-    private final Item itemToUpdate = new Item();
+public class ItemCommentMapperTests {
+    private final ItemComment itemCommentToUpdate = new ItemComment();
     @BeforeEach
     void  setup() throws Exception {
-        itemToUpdate.setId(0L);
-        itemToUpdate.setName("untouched Name");
-        itemToUpdate.setDescription("untouched description");
-        itemToUpdate.setAvailable(true);
-        itemToUpdate.setOwner(user1);
-        itemToUpdate.setRequestId(999L);
+        itemCommentToUpdate.setId(0L);
+        itemCommentToUpdate.setText("untouched text");
+        itemCommentToUpdate.setItem(item);
+        itemCommentToUpdate.setAuthor(user1);
+        itemCommentToUpdate.setCreated(now().minusHours(5));
     }
 
     @Test
     public void testToItemDto() throws Exception {
-        ItemDto itemDto = toItemDto(item,
-                bookingToDtoShort(bookingApproved),
-                bookingToDtoShort(bookingApproved),
-                new ArrayList<>() );
+        ItemComment comment = mapCommentRequestDtoToComment(CommonData.commentDto, item, user1);
         assertEquals(itemDto.getName(), item.getName());
         assertEquals(itemDto.getLastBooking(), bookingToDtoShort(bookingApproved));
         assertEquals(itemDto.getDescription(), item.getDescription());
@@ -47,8 +47,8 @@ public class ItemMapperTests {
     }
 
     @Test
-    public void testUpdateItemWithDtoItemIsNullExpectNull() throws Exception {
-        assertNull(updateItemWithDto(null, itemFromBody));
+    public void testmapCommentToCommentResponseDtoNullExpectNull() throws Exception {
+        assertNull(mapCommentToCommentResponseDto(null));
     }
 
     @Test

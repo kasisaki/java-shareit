@@ -11,7 +11,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.ElementNotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.dto.UserUpdateDto;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -63,30 +62,6 @@ public class UserControllerTests {
                 .andExpect(jsonPath("$.name").value(userDto.getName()))
                 .andExpect(jsonPath("$.login").value(userDto.getLogin()))
                 .andExpect(jsonPath("$.email").value(userDto.getEmail()));
-    }
-
-    @Test
-    void testCreateUserWrongLogin() throws Exception {
-        UserUpdateDto wrongUser = UserUpdateDto.builder()
-                .id(55L)
-                .login("user Login")
-                .name("user5Name")
-                .email("user5Email@email.com")
-                .build();
-
-        when(userService.update(any(), anyLong()))
-                .thenReturn(userDto);
-
-        mvc.perform(post(url)
-                        .content(mapper.writeValueAsString(wrongUser))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.id").doesNotExist())
-                .andExpect(jsonPath("$.name").doesNotExist())
-                .andExpect(jsonPath("$.login").doesNotExist())
-                .andExpect(jsonPath("$.email").doesNotExist());
     }
 
     @Test

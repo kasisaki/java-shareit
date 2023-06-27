@@ -11,6 +11,10 @@ import java.util.List;
 public class ItemMapper {
 
     public static ItemDto toItemDto(Item item, BookingDtoShort nextBooking, BookingDtoShort lastBooking, List<CommentDto> comments) {
+        if (item == null) {
+            return null;
+        }
+
         return ItemDto.builder()
                 .id(item.getId())
                 .name(item.getName())
@@ -23,13 +27,19 @@ public class ItemMapper {
     }
 
     public static Item updateItemWithDto(Item item, ItemUpdateDto itemDto) {
+        if (item == null) {
+            return null;
+        }
+        if (itemDto == null) {
+            return item;
+        }
         if (itemDto.getOwner() != null) {
             item.setOwner(itemDto.getOwner());
         }
-        if (itemDto.getName() != null) {
+        if (itemDto.getName() != null && !itemDto.getName().isEmpty()) {
             item.setName(itemDto.getName());
         }
-        if (itemDto.getDescription() != null) {
+        if (itemDto.getDescription() != null && !itemDto.getDescription().isEmpty()) {
             item.setDescription(itemDto.getDescription());
         }
         if (itemDto.getAvailable() != null) {

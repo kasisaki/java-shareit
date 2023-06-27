@@ -46,17 +46,17 @@ public class CommonData {
 
     public static final ItemUpdateDto itemFromBody = ItemUpdateDto.builder()
             .id(222L)
-            .name("itemName")
-            .description("itemDescription")
+            .name("itemFromBodyName")
+            .description("itemFromBodyDescription")
             .available(true)
             .owner(user1)
-            .request(request)
+            .requestId(request.getId())
             .build();
     public static ItemUpdateDto wrongItem = ItemUpdateDto.builder()
             .id(itemFromBody.getId())
             .name(itemFromBody.getName())
             .owner(itemFromBody.getOwner())
-            .request(itemFromBody.getRequest())
+            .requestId(itemFromBody.getRequestId())
             .build();
     public static final Item item = new Item(
             222L,
