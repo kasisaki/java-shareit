@@ -52,17 +52,26 @@ public class CommonData {
             .owner(user1)
             .requestId(request.getId())
             .build();
-    public static ItemUpdateDto wrongItem = ItemUpdateDto.builder()
+    public static ItemUpdateDto wrongDtoItem = ItemUpdateDto.builder()
             .id(itemFromBody.getId())
             .name(itemFromBody.getName())
             .owner(itemFromBody.getOwner())
             .requestId(itemFromBody.getRequestId())
             .build();
-    public static final Item item = new Item(
+
+    public static final Item itemAvailable = new Item(
             222L,
             "itemName",
             "itemDescription",
             true,
+            userToUpdate,
+            55L
+    );
+    public static final Item itemNotAvailable = new Item(
+            222L,
+            "itemName",
+            "itemDescription",
+            false,
             user1,
             55L
     );
@@ -70,7 +79,7 @@ public class CommonData {
             333L,
             now().minusDays(3),
             now().plusDays(3),
-            item,
+            itemAvailable,
             user1,
             REJECTED
     );
@@ -78,9 +87,18 @@ public class CommonData {
             444L,
             now().minusDays(2),
             now().plusDays(2),
-            item,
-            user1,
+            itemAvailable,
+            userToUpdate,
             APPROVED
+    );
+
+    public static final Booking bookingWaiting = new Booking(
+            444L,
+            now().minusDays(2),
+            now().plusDays(2),
+            itemAvailable,
+            user1,
+            WAITING
     );
 
     public static final BookingDto bookingDto2 = BookingDto.builder()
@@ -98,13 +116,22 @@ public class CommonData {
             .start(now().plusHours(1))
             .end(now().plusHours(2))
             .itemId(222L)
-            .item(item)
+            .item(itemAvailable)
+            .booker(user1)
+            .status(WAITING)
+            .build();
+    public static final BookingDto bookingDtoUpdate = BookingDto.builder()
+            .id(1L)
+            .start(now().plusHours(1))
+            .end(now().plusHours(2))
+            .itemId(222L)
+            .item(itemAvailable)
             .booker(user1)
             .status(WAITING)
             .build();
 
     public static final ItemDto itemDto = toItemDto(
-            item,
+            itemAvailable,
             bookingToDtoShort(dtoToBooking(bookingDto1)),
             bookingToDtoShort(dtoToBooking(bookingDto2)),
             new ArrayList<>());

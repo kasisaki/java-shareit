@@ -29,13 +29,13 @@ public class ItemMapperTests {
 
     @Test
     public void testToItemDto() throws Exception {
-        ItemDto itemDto = toItemDto(item,
+        ItemDto itemDto = toItemDto(itemAvailable,
                 bookingToDtoShort(bookingApproved),
                 bookingToDtoShort(bookingApproved),
                 new ArrayList<>() );
-        assertEquals(itemDto.getName(), item.getName());
+        assertEquals(itemDto.getName(), itemAvailable.getName());
         assertEquals(itemDto.getLastBooking(), bookingToDtoShort(bookingApproved));
-        assertEquals(itemDto.getDescription(), item.getDescription());
+        assertEquals(itemDto.getDescription(), itemAvailable.getDescription());
     }
 
     @Test

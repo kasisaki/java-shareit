@@ -13,9 +13,7 @@ public class CommentMapper {
         ItemComment comment = new ItemComment();
         comment.setText(requestDto.getText());
         comment.setItem(item);
-        if (user.getName() == requestDto.getAuthorName()) {
-            comment.setAuthor(user);
-        }
+        comment.setAuthor(user);
         comment.setCreated(now());
         return comment;
     }

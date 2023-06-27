@@ -131,7 +131,7 @@ public class ItemControllerTests {
 
 
         mvc.perform(patch(urlPath, 222)
-                        .content(mapper.writeValueAsString(wrongItem))
+                        .content(mapper.writeValueAsString(wrongDtoItem))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -270,6 +270,4 @@ public class ItemControllerTests {
                 .andExpect(jsonPath("$[1].id").doesNotExist())
                 .andExpect(jsonPath("$[2].id").doesNotExist());
     }
-
-
 }
