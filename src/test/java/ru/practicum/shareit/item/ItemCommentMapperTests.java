@@ -16,8 +16,9 @@ import static ru.practicum.shareit.utils.DateUtils.now;
 @SpringBootTest
 public class ItemCommentMapperTests {
     private final ItemComment itemCommentToUpdate = new ItemComment();
+
     @BeforeEach
-    void  setup() throws Exception {
+    void setup() throws Exception {
         itemCommentToUpdate.setId(0L);
         itemCommentToUpdate.setText("untouched text");
         itemCommentToUpdate.setItem(itemAvailable);
@@ -40,7 +41,7 @@ public class ItemCommentMapperTests {
 
     @Test
     public void testMapCommentToCommentResponseDto() throws Exception {
-        CommentDto dto  = mapCommentToCommentResponseDto(itemCommentToUpdate);
+        CommentDto dto = mapCommentToCommentResponseDto(itemCommentToUpdate);
 
         assertEquals(dto.getCreated(), itemCommentToUpdate.getCreated());
         assertEquals(dto.getAuthorName(), itemCommentToUpdate.getAuthor().getName());

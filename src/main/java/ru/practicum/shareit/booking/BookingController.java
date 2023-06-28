@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 
@@ -17,6 +18,7 @@ import static ru.practicum.shareit.utils.Constants.SHARER_USER_ID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/bookings")
+@Validated
 public class BookingController {
     private final BookingService bookingService;
 

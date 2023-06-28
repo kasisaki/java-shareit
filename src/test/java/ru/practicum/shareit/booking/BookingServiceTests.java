@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.Rollback;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.storage.BookingRepository;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.ElementNotFoundException;
@@ -21,8 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static ru.practicum.shareit.CommonData.*;
-import static ru.practicum.shareit.utils.BookingStatus.APPROVED;
-import static ru.practicum.shareit.utils.BookingStatus.REJECTED;
+import static ru.practicum.shareit.utils.BookingStatus.*;
 import static ru.practicum.shareit.utils.DateUtils.now;
 
 @SpringBootTest
@@ -41,6 +41,8 @@ public class BookingServiceTests {
     User userMock;
     @MockBean
     BookingDto bookingDtoMock;
+    @MockBean
+    Booking booking;
 
     @Test
     public void testCreate() throws Exception {
@@ -76,10 +78,11 @@ public class BookingServiceTests {
     @Test
     public void testCreateBookingOfOwnItemError() throws Exception {
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(itemAvailable));
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user1));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(userToUpdate));
         when(bookingRepository.save(any())).thenReturn(bookingApproved);
 
         Exception e = assertThrows(ElementNotFoundException.class, () -> bookingService.create(bookingDto1, 11L));
+        assertEquals("Cannot book your own item", e.getMessage());
     }
 
     @Test
@@ -94,7 +97,11 @@ public class BookingServiceTests {
 
     @Test
     public void testApproveBookingByRequestor() throws Exception {
-        when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(bookingWaiting));
+        Booking bookTest = new Booking();
+        bookTest.setStatus(WAITING);
+        bookTest.setRequestor(user1);
+
+        when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(bookTest));
         when(bookingRepository.save(any())).thenReturn(bookingApproved);
 
         Exception e = assertThrows(ElementNotFoundException.class,
@@ -105,6 +112,8 @@ public class BookingServiceTests {
     @Test
     public void testApproveBookingAlreadyApproved() throws Exception {
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(bookingApproved));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(userToUpdate));
+
         when(bookingRepository.save(any())).thenReturn(bookingApproved);
 
         Exception e = assertThrows(BadRequestException.class,
@@ -117,16 +126,22 @@ public class BookingServiceTests {
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(bookingWaiting));
         when(bookingRepository.save(any())).thenReturn(bookingApproved);
 
-        BookingDto testDto = bookingService.approveBooking(1L, true, 22L);
+        BookingDto testDto = bookingService.approveBooking(1L, true, 11L);
         assertEquals(APPROVED, testDto.getStatus());
     }
 
     @Test
     public void testApproveBookingReject() throws Exception {
-        when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(bookingWaiting));
-        when(bookingRepository.save(any())).thenReturn(bookingRejected);
+        Booking bookTest = new Booking();
+        bookTest.setStatus(WAITING);
+        bookTest.setRequestor(user2);
+        bookTest.setItem(itemAvailable);
 
-        BookingDto testDto = bookingService.approveBooking(1L, false, 22L);
+        when(bookingRepository.findById(anyLong())).thenReturn(Optional.of(bookTest));
+        when(bookingRepository.save(any())).thenReturn(bookingRejected);
+        when(booking.getStatus()).thenReturn(WAITING);
+
+        BookingDto testDto = bookingService.approveBooking(1L, false, 11L);
         assertEquals(REJECTED, testDto.getStatus());
     }
 
@@ -134,23 +149,5 @@ public class BookingServiceTests {
     public void testGetBookingRequestorNotExists() throws Exception {
         when(userRepository.existsById(anyLong())).thenReturn(false);
         assertThrows(ElementNotFoundException.class, () -> bookingService.getBooking(1L, 1L));
-    }
-
-    @Test
-    public void testCreate6() throws Exception {
-
-    }
-    @Test
-    public void testCreate5() throws Exception {
-
-    }@Test
-    public void testCreate4() throws Exception {
-
-    }@Test
-    public void testCreate3() throws Exception {
-
-    }@Test
-    public void testCreate2() throws Exception {
-
     }
 }

@@ -29,13 +29,13 @@ import static ru.practicum.shareit.utils.Constants.SHARER_USER_ID;
 @WebMvcTest(controllers = ItemController.class)
 @AutoConfigureMockMvc
 public class ItemControllerTests {
-    @Autowired
-    ObjectMapper mapper;
     private final String url = "/items";
     @Autowired
-    private MockMvc mvc;
+    ObjectMapper mapper;
     @MockBean
     ItemService itemService;
+    @Autowired
+    private MockMvc mvc;
 
     @BeforeAll
     static void before() {

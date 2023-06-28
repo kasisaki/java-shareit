@@ -17,8 +17,9 @@ import static ru.practicum.shareit.item.mapper.ItemMapper.updateItemWithDto;
 @SpringBootTest
 public class ItemMapperTests {
     private final Item itemToUpdate = new Item();
+
     @BeforeEach
-    void  setup() throws Exception {
+    void setup() throws Exception {
         itemToUpdate.setId(0L);
         itemToUpdate.setName("untouched Name");
         itemToUpdate.setDescription("untouched description");
@@ -32,7 +33,7 @@ public class ItemMapperTests {
         ItemDto itemDto = toItemDto(itemAvailable,
                 bookingToDtoShort(bookingApproved),
                 bookingToDtoShort(bookingApproved),
-                new ArrayList<>() );
+                new ArrayList<>());
         assertEquals(itemDto.getName(), itemAvailable.getName());
         assertEquals(itemDto.getLastBooking(), bookingToDtoShort(bookingApproved));
         assertEquals(itemDto.getDescription(), itemAvailable.getDescription());

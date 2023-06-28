@@ -27,25 +27,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class UserControllerTests {
     private final String url = "/users";
-    @Autowired
-    ObjectMapper mapper;
-    @MockBean
-    UserService userService;
-    @Autowired
-    private MockMvc mvc;
     private final UserDto userDto = UserDto.builder()
             .id(1L)
             .login("userLogin")
             .name("userName")
             .email("userEmail@email.com")
             .build();
-
     private final UserDto userDto5 = UserDto.builder()
             .id(5L)
             .login("user5Login")
             .name("user5Name")
             .email("user5Email@email.com")
             .build();
+    @Autowired
+    ObjectMapper mapper;
+    @MockBean
+    UserService userService;
+    @Autowired
+    private MockMvc mvc;
 
     @Test
     void testCreateUser() throws Exception {
