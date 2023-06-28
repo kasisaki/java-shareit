@@ -112,7 +112,7 @@ public class BookingControllerTests {
     @Test
     public void tesGetUserBookingsState() throws Exception {
         List<BookingDto> bookingList = List.of(bookingDto1, bookingDto2);
-        when(bookingService.getUserBookingsState(anyLong(), any()))
+        when(bookingService.getUserBookingsState(anyLong(), any(), any(), any()))
                 .thenReturn(bookingList);
 
         mvc.perform(get(url)
@@ -140,7 +140,7 @@ public class BookingControllerTests {
     public void tesGetUserItemsState() throws Exception {
         String urlPath = url + "/owner";
         List<BookingDto> bookingList = List.of(bookingDto1, bookingDto2);
-        when(bookingService.getUserItemsState(anyLong(), any()))
+        when(bookingService.getUserItemsState(anyLong(), any(), any(), any()))
                 .thenReturn(bookingList);
 
         mvc.perform(get(urlPath)

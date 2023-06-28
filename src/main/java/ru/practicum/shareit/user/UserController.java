@@ -1,6 +1,5 @@
 package ru.practicum.shareit.user;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,7 +15,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 @Slf4j
-@Getter
 @RequiredArgsConstructor
 public class UserController {
 

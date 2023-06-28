@@ -83,8 +83,7 @@ public class ItemService {
     }
 
     public CommentDto createItemComment(CommentDto commentDto, Long userId, Long itemId) {
-        if (bookingRepository
-                .findAllByItemIdAndRequestorIdAndStartIsBefore(itemId, userId, LocalDateTime.now()).isEmpty()) {
+        if (!bookingRepository.existsByItemIdAndRequestorIdAndStartIsBefore(itemId, userId, LocalDateTime.now())) {
             throw new BadRequestException("User with id = " + userId + "has not booked the item with id = " + itemId);
         }
 
