@@ -9,7 +9,9 @@ import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.request.dto.RequestDto;
 import ru.practicum.shareit.request.mapper.ItemRequestMapper;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.storage.ItemRequestRepository;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
 import java.util.List;
@@ -28,9 +30,11 @@ public class ItemRequestService {
     private final ItemRequestRepository itemRequestRepository;
 
     public RequestDto create(RequestDto requestDto, Long requestorId) {
-        return requestToItemRequestDto(itemRequestRepository.save(dtoToItemRequest(requestDto, userRepository.findById(requestorId).orElseThrow(
-                () -> new ElementNotFoundException("User " + requestorId + " does not exist")
-        ))));
+        User user = userRepository.findById(requestorId)
+                .orElseThrow(() -> new ElementNotFoundException("User " + requestorId + " does not exist"));
+        ItemRequest request = itemRequestRepository.save(dtoToItemRequest(requestDto, user));
+
+        return requestToItemRequestDto(request);
     }
 
     public List<RequestDto> getAllRequestsOfUser(Long requestorId) {

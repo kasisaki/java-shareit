@@ -146,7 +146,7 @@ public class ItemControllerTests {
     @Test
     void testGetAllItems() throws Exception {
         List<ItemDto> itemList = List.of(itemDto, itemDto);
-        when(itemService.getItemsOfOwner(anyLong()))
+        when(itemService.getItemsOfOwner(anyLong(), anyInt(), anyInt()))
                 .thenReturn(itemList);
 
 
@@ -228,7 +228,7 @@ public class ItemControllerTests {
     void testSearchItem() throws Exception {
         String urlPath = url + "/search";
         List<ItemDto> itemList = List.of(itemDto, itemDto);
-        when(itemService.searchItems(anyString()))
+        when(itemService.searchItems(anyString(), anyInt(), anyInt()))
                 .thenReturn(itemList);
 
 
@@ -251,7 +251,7 @@ public class ItemControllerTests {
     @Test
     void testSearchItemEmptySearchContent() throws Exception {
         String urlPath = url + "/search";
-        when(itemService.searchItems(anyString()))
+        when(itemService.searchItems(anyString(), anyInt(), anyInt()))
                 .thenReturn(new ArrayList<>());
 
 

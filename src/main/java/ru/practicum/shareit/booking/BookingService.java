@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.storage.BookingRepository;
@@ -25,11 +26,13 @@ import static ru.practicum.shareit.utils.DateUtils.now;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class BookingService {
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
 
+    @Transactional
     public BookingDto create(BookingDto bookingDto, Long userId) {
         if (!bookingDto.getEnd().isAfter(bookingDto.getStart())) {
             throw new BadRequestException("Booking end time must not be before the start time");
@@ -48,6 +51,7 @@ public class BookingService {
         throw new BadRequestException("Item is not available");
     }
 
+    @Transactional
     public BookingDto approveBooking(Long bookingId, boolean approved, Long userId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ElementNotFoundException("Booking with id " + bookingId + "not found"));

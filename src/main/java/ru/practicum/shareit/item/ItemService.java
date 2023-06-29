@@ -2,7 +2,10 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDtoShort;
 import ru.practicum.shareit.booking.storage.BookingRepository;
 import ru.practicum.shareit.exception.BadRequestException;
@@ -34,12 +37,14 @@ import static ru.practicum.shareit.utils.DateUtils.now;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
 
+    @Transactional
     public ItemDto create(ItemUpdateDto itemUpdateDto, Long ownerId) {
         User user = userRepository.findById(ownerId)
                 .orElseThrow(() -> new ElementNotFoundException("User with id " + ownerId + " is not found"));
@@ -48,6 +53,7 @@ public class ItemService {
         return retrieveWithBookingInfo(itemRepository.save(ItemMapper.updateItemWithDto(item, itemUpdateDto)));
     }
 
+    @Transactional
     public ItemDto updateItem(Long itemId, ItemUpdateDto itemUpdateDto, Long ownerId) {
         Item item = itemRepository.save(ItemMapper.updateItemWithDto(
                 checkItemAndUserExistAndReturn(ownerId, itemId), itemUpdateDto));
@@ -67,21 +73,32 @@ public class ItemService {
         return result;
     }
 
-    public List<ItemDto> getItemsOfOwner(Long ownerId) {
-        return itemRepository.findAllByOwnerIdOrderByIdAsc(ownerId).stream().map(this::retrieveWithBookingInfo)
+    public List<ItemDto> getItemsOfOwner(Long ownerId, Integer from, Integer size) {
+        if (!userRepository.existsById(ownerId)) {
+            throw new ElementNotFoundException("User with id " + ownerId + " does not exist");
+        }
+        Pageable pageable = PageRequest.of(from / size, size);
+        // Поля lastBooking и nextBooking должны постоянно обновляться,
+        // т.к. высчитываются по времени запроса
+        // можно вместо множественного запроса за раз получить все данные по комментариям и бронированиям всех вещей пользователя
+        // и уже распределять по item, но тут уже возникает проблема объема получаемых данных
+        // по другому не знаю как. Если это оптимальнее - могу реализовать
+        return itemRepository.findAllByOwnerIdOrderByIdAsc(ownerId, pageable).stream().map(this::retrieveWithBookingInfo)
                 .collect(Collectors.toList());
     }
 
-    public List<ItemDto> searchItems(String searchStr) {
+    public List<ItemDto> searchItems(String searchStr, Integer from, Integer size) {
         if (searchStr.isEmpty()) {
             return new ArrayList<>();
         }
+        Pageable pageable = PageRequest.of(from / size, size);
 
-        return itemRepository.findByDescriptionContainingIgnoreCaseAndAvailableTrue(searchStr).stream()
+        return itemRepository.findByDescriptionContainingIgnoreCaseAndAvailableTrue(searchStr, pageable).stream()
                 .map(this::retrieveWithBookingInfo)
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public CommentDto createItemComment(CommentDto commentDto, Long userId, Long itemId) {
         if (!bookingRepository.existsByItemIdAndRequestorIdAndStartIsBefore(itemId, userId, LocalDateTime.now())) {
             throw new BadRequestException("User with id = " + userId + "has not booked the item with id = " + itemId);

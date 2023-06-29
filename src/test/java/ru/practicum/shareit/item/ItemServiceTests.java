@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.storage.BookingRepository;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.ElementNotFoundException;
@@ -154,21 +156,31 @@ public class ItemServiceTests {
 
     @Test
     void getAllByUserIdTest() {
-        when(itemRepository.findAllByOwnerIdOrderByIdAsc(anyLong())).thenReturn(Collections.singletonList(item));
+        when(itemRepository.findAllByOwnerIdOrderByIdAsc(anyLong(), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(item)));
         when(commentRepository.findByItemId(anyLong())).thenReturn(Collections.emptyList());
+        when(userRepository.existsById(anyLong())).thenReturn(true);
         item.setOwner(user);
 
-        List<ItemDto> responseDto = itemService.getItemsOfOwner(1L);
+        List<ItemDto> responseDto = itemService.getItemsOfOwner(1L, 0, 10);
         assertNotNull(responseDto);
         assertFalse(responseDto.isEmpty());
     }
 
     @Test
+    void getAllByUserIdTestUserDoesNotExist() {
+        when(userRepository.existsById(anyLong())).thenReturn(false);
+
+        assertThrows(ElementNotFoundException.class, () -> itemService.getItemsOfOwner(1L, 0, 10));
+    }
+
+    @Test
     void searchItemsTest() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-        when(itemRepository.findByDescriptionContainingIgnoreCaseAndAvailableTrue(anyString())).thenReturn(Collections.singletonList(item));
+        when(itemRepository.findByDescriptionContainingIgnoreCaseAndAvailableTrue(anyString(), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(Collections.singletonList(item)));
 
-        List<ItemDto> responseDto = itemService.searchItems("test");
+        List<ItemDto> responseDto = itemService.searchItems("test", 0, 10);
         assertNotNull(responseDto);
         assertFalse(responseDto.isEmpty());
     }
