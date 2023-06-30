@@ -4,14 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 import static ru.practicum.shareit.utils.Constants.SHARER_USER_ID;
@@ -20,13 +16,12 @@ import static ru.practicum.shareit.utils.Constants.SHARER_USER_ID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/bookings")
-@Validated
 @Slf4j
 public class BookingController {
     private final BookingService bookingService;
 
     @PostMapping
-    public ResponseEntity<BookingDto> createBooking(@Valid @RequestBody BookingDto bookingDto,
+    public ResponseEntity<BookingDto> createBooking(@RequestBody BookingDto bookingDto,
                                                     @RequestHeader(value = SHARER_USER_ID) long userId,
                                                     HttpServletRequest request) {
         log.info("Create Booking request: {}," +
@@ -67,8 +62,8 @@ public class BookingController {
 
     @GetMapping()
     public ResponseEntity<List<BookingDto>> getUserBookingsState(@RequestParam(name = "state", defaultValue = "ALL") String state,
-                                                                 @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
-                                                                 @Positive @RequestParam(name = "size", defaultValue = "10") int size,
+                                                                 @RequestParam(name = "from", defaultValue = "0") int from,
+                                                                 @RequestParam(name = "size", defaultValue = "10") int size,
                                                                  @RequestHeader(value = SHARER_USER_ID) long requestorId,
                                                                  HttpServletRequest request) {
         log.info("GET Bookings request with state:" +
@@ -82,8 +77,8 @@ public class BookingController {
 
     @GetMapping("/owner")
     public ResponseEntity<List<BookingDto>> getUserItemsState(@RequestParam(name = "state", defaultValue = "ALL") String state,
-                                                              @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
-                                                              @Positive @RequestParam(name = "size", defaultValue = "10") int size,
+                                                              @RequestParam(name = "from", defaultValue = "0") int from,
+                                                              @RequestParam(name = "size", defaultValue = "10") int size,
                                                               @RequestHeader(value = SHARER_USER_ID) long ownerId,
                                                               HttpServletRequest request) {
         log.info("GET Bookings of ITEM OWNER request with state:" +

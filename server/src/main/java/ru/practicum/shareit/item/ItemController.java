@@ -10,9 +10,6 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemUpdateDto;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 import static ru.practicum.shareit.utils.Constants.SHARER_USER_ID;
@@ -26,7 +23,7 @@ public class ItemController {
 
     @PostMapping
     public ItemDto createItem(@RequestHeader(value = SHARER_USER_ID) long ownerId,
-                              @RequestBody @Valid ItemUpdateDto itemDto,
+                              @RequestBody ItemUpdateDto itemDto,
                               HttpServletRequest request) {
         log.info("Requested Item create:" +
                         "\nITEM:    {}," +
@@ -39,7 +36,7 @@ public class ItemController {
 
     @PostMapping("/{itemId}/comment")
     public CommentDto createComment(@RequestHeader(value = SHARER_USER_ID) long userId,
-                                    @RequestBody @Valid CommentDto comment,
+                                    @RequestBody CommentDto comment,
                                     @PathVariable(name = "itemId") long itemId,
                                     HttpServletRequest request) {
         log.info("Requested COMMENT create:" +
@@ -68,8 +65,8 @@ public class ItemController {
 
     @GetMapping
     public ResponseEntity<List<ItemDto>> getAllItems(@RequestHeader(value = SHARER_USER_ID) long ownerId,
-                                                     @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
-                                                     @Positive @RequestParam(name = "size", defaultValue = "10") int size,
+                                                     @RequestParam(name = "from", defaultValue = "0") int from,
+                                                     @RequestParam(name = "size", defaultValue = "10") int size,
                                                      HttpServletRequest request) {
         log.info("Get all ITEMs request:" +
                         "\nOwner ID: {}" +
@@ -94,8 +91,8 @@ public class ItemController {
 
     @GetMapping("/search")
     public ResponseEntity<List<ItemDto>> searchItem(@RequestParam("text") String text,
-                                                    @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
-                                                    @Positive @RequestParam(name = "size", defaultValue = "10") int size,
+                                                    @RequestParam(name = "from", defaultValue = "0") int from,
+                                                    @RequestParam(name = "size", defaultValue = "10") int size,
                                                     HttpServletRequest request) {
         log.info("Search ITEMs request:" +
                         "\nSearch text: {}" +
