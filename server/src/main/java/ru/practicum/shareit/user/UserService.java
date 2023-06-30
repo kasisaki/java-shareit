@@ -43,8 +43,7 @@ public class UserService {
         return UserMapper.toUserDto(userRepository.save(UserMapper.updateUserFromDto(user, userUpdateDto)));
     }
 
-    public String delete(Long userId) {
+    public void delete(Long userId) {
         userRepository.deleteById(userId);
-        return "User with id " + userId + " deleted successfully";
     }
 }

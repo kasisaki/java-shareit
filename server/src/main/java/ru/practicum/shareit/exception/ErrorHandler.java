@@ -54,7 +54,7 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> catchIllegalStatusException(final IllegalStatusException e) {
         log.error(e.getMessage(), e);
-        ErrorResponse errorResponse = new ErrorResponse(BAD_REQUEST.value(), e.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(BAD_REQUEST.value(), "Unknown state: UNSUPPORTED_STATUS");
         return new ResponseEntity<>(errorResponse, BAD_REQUEST);
     }
 

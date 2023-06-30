@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.BookingState;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -43,7 +42,7 @@ public class BookingController {
                                                  HttpServletRequest request) {
         log.info("Requested Booking status change request:" +
                         "\nBooking ID:  {}," +
-                        "\nUser ID:    {}" +
+                        "\nUser ID:     {}" +
                         "\nAPPROVED:    {}" +
                         "\nfrom IP:     {}",
                 bookingId, requestorId, approved, request.getRemoteAddr()
@@ -65,7 +64,7 @@ public class BookingController {
     }
 
     @GetMapping()
-    public ResponseEntity<Object> getUserBookingsState(@RequestParam(name = "state", defaultValue = "ALL") BookingState state,
+    public ResponseEntity<Object> getUserBookingsState(@RequestParam(name = "state", defaultValue = "ALL") String state,
                                                        @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
                                                        @Positive @RequestParam(name = "size", defaultValue = "10") int size,
                                                        @RequestHeader(value = SHARER_USER_ID) long requestorId,
@@ -80,7 +79,7 @@ public class BookingController {
     }
 
     @GetMapping("/owner")
-    public ResponseEntity<Object> getUserItemsBookings(@RequestParam(name = "state", defaultValue = "ALL") BookingState state,
+    public ResponseEntity<Object> getUserItemsBookings(@RequestParam(name = "state", defaultValue = "ALL") String state,
                                                        @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
                                                        @Positive @RequestParam(name = "size", defaultValue = "10") int size,
                                                        @RequestHeader(value = SHARER_USER_ID) long ownerId,

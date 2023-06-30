@@ -11,6 +11,7 @@ services:
       - db
     environment:
       - SHAREIT_SERVER_URL=http://server:9090
+      - spring.jpa.hibernate.ddl-auto=create-drop
 
   server:
     build: server

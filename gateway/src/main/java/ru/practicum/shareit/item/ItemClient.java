@@ -35,7 +35,7 @@ public class ItemClient extends BaseClient {
         Map<String, Object> parameters = Map.of(
                 "itemId", itemId
         );
-        return post("{itemId}/comment", userId, parameters, requestDto);
+        return post("/{itemId}/comment", userId, parameters, requestDto);
     }
 
     public ResponseEntity<Object> updateItem(ItemUpdateDto item, long itemId, long userId) {

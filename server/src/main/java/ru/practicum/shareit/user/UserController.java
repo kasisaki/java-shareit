@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserUpdateDto;
 
-import javax.validation.Valid;
 import java.util.List;
 
 
@@ -31,7 +30,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserUpdateDto userUpdateDto) {
+    public ResponseEntity<UserDto> createUser(@RequestBody UserUpdateDto userUpdateDto) {
         return new ResponseEntity<>(userService.create(userUpdateDto), HttpStatus.OK);
     }
 
@@ -43,6 +42,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable long id) {
-        return new ResponseEntity<>(userService.delete(id), HttpStatus.OK);
+        userService.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
