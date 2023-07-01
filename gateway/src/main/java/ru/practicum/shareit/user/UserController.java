@@ -12,11 +12,11 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 
 
-@RestController
-@RequestMapping("/users")
 @Slf4j
-@RequiredArgsConstructor
 @Validated
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/users")
 public class UserController {
 
     private final UserClient userClient;

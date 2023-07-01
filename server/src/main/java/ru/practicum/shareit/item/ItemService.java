@@ -34,9 +34,9 @@ import static ru.practicum.shareit.item.mapper.ItemMapper.toItemDto;
 import static ru.practicum.shareit.utils.BookingStatus.APPROVED;
 import static ru.practicum.shareit.utils.DateUtils.now;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 @Transactional(readOnly = true)
 public class ItemService {
     private final ItemRepository itemRepository;

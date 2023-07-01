@@ -15,11 +15,11 @@ import javax.validation.constraints.PositiveOrZero;
 import static ru.practicum.shareit.utils.Constants.SHARER_USER_ID;
 
 
+@Slf4j
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/bookings")
-@Validated
-@Slf4j
 public class BookingController {
     private final BookingClient bookingClient;
 

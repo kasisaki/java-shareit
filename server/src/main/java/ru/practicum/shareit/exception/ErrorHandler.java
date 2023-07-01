@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ru.practicum.shareit.exception.errorResponse.ErrorResponse;
 
-import javax.validation.ConstraintViolationException;
-
 import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
@@ -43,12 +41,6 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
             httpStatus = BAD_REQUEST;
         }
         return new ResponseEntity<>(new ErrorResponse(httpStatus.value(), e.getMessage()), httpStatus);
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<ErrorResponse> catchConstraintViolationException(final ConstraintViolationException e) {
-        log.error(e.getMessage(), e);
-        return new ResponseEntity<>(new ErrorResponse(BAD_REQUEST.value(), e.getMessage()), BAD_REQUEST);
     }
 
     @ExceptionHandler

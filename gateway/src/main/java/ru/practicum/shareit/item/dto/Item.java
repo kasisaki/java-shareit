@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.model.User;
 
 @Data
-@NoArgsConstructor
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 public class Item {
     private Long id;

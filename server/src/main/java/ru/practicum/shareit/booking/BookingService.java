@@ -23,8 +23,8 @@ import static ru.practicum.shareit.booking.BookingMapper.toBookingDto;
 import static ru.practicum.shareit.utils.BookingStatus.*;
 import static ru.practicum.shareit.utils.DateUtils.now;
 
-@Service
 @Slf4j
+@Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class BookingService {

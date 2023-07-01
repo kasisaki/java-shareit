@@ -1,5 +1,7 @@
 package ru.practicum.shareit.utils;
 
+import ru.practicum.shareit.exception.IllegalStatusException;
+
 public enum BookingStatus {
     WAITING,
     APPROVED,
@@ -14,8 +16,10 @@ public enum BookingStatus {
                 return APPROVED;
             case "CANCELED":
                 return CANCELED;
-            default:
+            case "WAITING":
                 return WAITING;
+            default:
+                throw new IllegalStatusException("Unknown state: UNSUPPORTED_STATUS");
         }
     }
 }

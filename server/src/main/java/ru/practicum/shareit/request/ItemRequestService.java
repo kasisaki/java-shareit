@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
 import static ru.practicum.shareit.request.mapper.ItemRequestMapper.dtoToItemRequest;
 import static ru.practicum.shareit.request.mapper.ItemRequestMapper.requestToItemRequestDto;
 
-@Service
 @Slf4j
+@Service
 @RequiredArgsConstructor
 public class ItemRequestService {
 

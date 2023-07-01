@@ -13,8 +13,8 @@ import ru.practicum.shareit.user.storage.UserRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
 @Slf4j
+@Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
@@ -45,5 +45,6 @@ public class UserService {
 
     public void delete(Long userId) {
         userRepository.deleteById(userId);
+        log.info("User with userId " + userId + "deleted");
     }
 }

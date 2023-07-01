@@ -11,8 +11,8 @@ import java.util.List;
 import static ru.practicum.shareit.utils.Constants.SHARER_USER_ID;
 
 @RestController
-@RequestMapping(path = "/requests")
 @RequiredArgsConstructor
+@RequestMapping(path = "/requests")
 public class ItemRequestController {
 
     private final ItemRequestService requestService;

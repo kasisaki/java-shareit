@@ -11,10 +11,10 @@ import ru.practicum.shareit.user.dto.UserUpdateDto;
 import java.util.List;
 
 
-@RestController
-@RequestMapping("/users")
 @Slf4j
+@RestController
 @RequiredArgsConstructor
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;

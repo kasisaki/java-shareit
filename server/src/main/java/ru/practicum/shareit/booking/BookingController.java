@@ -13,10 +13,10 @@ import java.util.List;
 import static ru.practicum.shareit.utils.Constants.SHARER_USER_ID;
 
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/bookings")
-@Slf4j
 public class BookingController {
     private final BookingService bookingService;
 

@@ -14,9 +14,9 @@ import java.util.List;
 
 import static ru.practicum.shareit.utils.Constants.SHARER_USER_ID;
 
-@RequiredArgsConstructor
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/items")
 public class ItemController {
     private final ItemService itemService;
